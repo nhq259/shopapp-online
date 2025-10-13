@@ -1,5 +1,6 @@
-const db = require("models/index")
+const db = require("models/index");
 const { Op } = require("sequelize");
+const getAvatarURL = require("helpers/imageHelper");
 
 //[GET] /api/brands
 module.exports.getBrands = async (req, res) => {
@@ -10,9 +11,7 @@ module.exports.getBrands = async (req, res) => {
   let whereClause = {};
   if (search.trim() !== "") {
     whereClause = {
-      [Op.or]: [
-        { name: { [Op.like]: `%${search}%` } },
-      ],
+      [Op.or]: [{ name: { [Op.like]: `%${search}%` } }],
     };
   }
 
@@ -28,27 +27,33 @@ module.exports.getBrands = async (req, res) => {
 
   return res.status(200).json({
     message: "Lấy danh sách thương hiệu thành công",
-    data: brands,
+    data: brands.map((b) => ({
+      ...b.get({ plain: true }),
+      image: getAvatarURL.getAvatarURL(b.image || ""),
+    })),
     currentPage: parseInt(page, 10),
     totalPages: Math.ceil(totalBrands / pageSize),
-    totalBrands,
+    total: totalBrands,
   });
 };
 
 //[GET] /api/brands/:id
 module.exports.getBrandById = async (req, res) => {
-    const brandId = req.params.id;
-    const brand = await db.Brand.findByPk(brandId);
-  
-    if (!brand) {
-      return res.status(400).json({
-        message: "Không tìm thấy thương hiệu",
-      });
-    }
+  const brandId = req.params.id;
+  const brand = await db.Brand.findByPk(brandId);
 
-  res.status(200).json({
+  if (!brand) {
+    return res.status(400).json({
+      message: "Không tìm thấy thương hiệu",
+    });
+  }
+
+  return res.status(200).json({
     message: "Chi tiết một thương hiệu",
-    data: brand
+    data: {
+      ...brand.get({ plain: true }),
+      image: getAvatarURL.getAvatarURL(brand.image || ""),
+    },
   });
 };
 // [POST] /api/brands
@@ -80,10 +85,12 @@ module.exports.insertBrand = async (req, res) => {
 
   return res.status(201).json({
     message: "Thêm mới thương hiệu thành công",
-    data: brand,
+    data: {
+      ...brand.get({ plain: true }),
+      image: getAvatarURL.getAvatarURL(brand.image || ""),
+    },
   });
 };
-
 
 // [DELETE] /api/brands/:id
 module.exports.deleteBrand = async (req, res) => {
@@ -137,7 +144,9 @@ module.exports.updateBrand = async (req, res) => {
 
   return res.status(200).json({
     message: "Cập nhật thương hiệu thành công",
-    data: updatedBrand,
+    data: {
+      ...updatedBrand.get({ plain: true }),
+      image: getAvatarURL.getAvatarURL(updatedBrand.image || ""),
+    },
   });
 };
-

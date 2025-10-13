@@ -2,8 +2,12 @@ const db = require("models/index");
 const { Op } = require("sequelize");
 const { error } = require("utils/responseUtils");
 
-const path = require('path');
-const fs = require('fs')
+const path = require("path");
+const fs = require("fs");
+
+const BannerStatus = require("constants/BannerStatus");
+const orderStatus = require("constants/OrderStatus");
+const getAvatarURL = require("helpers/imageHelper");
 
 // [GET] /api/banners
 module.exports.getBanners = async (req, res) => {
@@ -30,10 +34,13 @@ module.exports.getBanners = async (req, res) => {
 
   return res.status(200).json({
     message: "Lấy danh sách banner thành công",
-    data: banners,
+    data: banners.map((b) => ({
+      ...b.get({ plain: true }),
+      image: getAvatarURL.getAvatarURL(b.image || ""),
+    })),
     currentPage: parseInt(page, 10),
     totalPages: Math.ceil(totalBanners / pageSize),
-    totalBanners,
+    total: totalBanners,
   });
 };
 
@@ -46,10 +53,14 @@ module.exports.getBannerById = async (req, res) => {
     return res.status(404).json({ message: "Không tìm thấy banner" });
   }
 
-  return res.status(200).json({
-    message: "Chi tiết banner",
-    data: item,
-  });
+return res.status(200).json({
+  message: "Chi tiết banner",
+  data: {
+    ...item.get({ plain: true }),
+    image: getAvatarURL.getAvatarURL(item.image || ""),
+  },
+});
+
 };
 
 // [POST] /api/banners
@@ -64,14 +75,20 @@ module.exports.insertBanner = async (req, res) => {
     });
   }
 
-
   // 2. Tạo mới banner
-  const banner = await db.Banner.create(req.body);
+  const bannerData = {
+    ...req.body,
+    status: BannerStatus.ACTIVE,
+  };
+  const banner = await db.Banner.create(bannerData);
 
-  return res.status(201).json({
-    message: "Thêm mới banner thành công",
-    data: banner,
-  });
+ return res.status(201).json({
+  message: "Thêm mới banner thành công",
+  data: {
+    ...banner.get({ plain: true }),
+    image: getAvatarURL.getAvatarURL(banner.image || ""),
+  },
+});
 };
 
 // [PUT] /api/banners/:id
@@ -104,10 +121,14 @@ module.exports.updateBanner = async (req, res) => {
     });
   }
 
-  return res.status(200).json({
-    message: "Cập nhật banner thành công",
-    data: updated,
-  });
+return res.status(200).json({
+  message: "Cập nhật banner thành công",
+  data: {
+    ...updated.get({ plain: true }),
+    image: getAvatarURL.getAvatarURL(updated.image || ""),
+  },
+});
+
 };
 
 // [DELETE] /api/banners/:id

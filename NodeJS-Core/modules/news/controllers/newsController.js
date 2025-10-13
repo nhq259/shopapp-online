@@ -1,5 +1,7 @@
 const db = require("models/index")
 const { Op } = require("sequelize");
+const getAvatarURL = require('helpers/imageHelper')
+
 
 // [GET] /api/news
 module.exports.getNews = async (req, res) => {
@@ -27,13 +29,17 @@ module.exports.getNews = async (req, res) => {
     db.News.count({ where: whereClause }),
   ]);
 
-  return res.status(200).json({
-    message: "Lấy danh sách tin tức thành công",
-    data: news,
-    currentPage: parseInt(page, 10),
-    totalPages: Math.ceil(totalNews / pageSize),
-    totalNews,
-  });
+ return res.status(200).json({
+  message: "Lấy danh sách tin tức thành công",
+  data: news.map(n => ({
+    ...n.get({ plain: true }),
+    image: getAvatarURL.getAvatarURL(n.image || ""),
+  })),
+  currentPage: parseInt(page, 10),
+  totalPages: Math.ceil(totalNews / pageSize),
+  total: totalNews,
+});
+
 };
 
 // [GET] /api/news/:id
@@ -45,10 +51,14 @@ module.exports.getNewsById = async (req, res) => {
     return res.status(404).json({ message: "Không tìm thấy tin tức" });
   }
 
-  return res.status(200).json({
-    message: "Chi tiết một tin tức",
-    data: item,
-  });
+return res.status(200).json({
+  message: "Chi tiết một tin tức",
+  data: {
+    ...item.get({ plain: true }),
+    image: getAvatarURL.getAvatarURL(item.image || ""),
+  },
+});
+
 };
 
 // [POST] /api/news
@@ -88,9 +98,13 @@ module.exports.insertNews = async (req, res) => {
 
     await t.commit();
     return res.status(201).json({
-      message: "Thêm mới tin tức thành công",
-      data: newsArticle,
-    });
+  message: "Thêm mới tin tức thành công",
+  data: {
+    ...newsArticle.get({ plain: true }),
+    image: getAvatarURL.getAvatarURL(newsArticle.image || ""),
+  },
+});
+
   } catch (err) {
     await t.rollback();
     throw err;
@@ -132,10 +146,14 @@ module.exports.updateNews = async (req, res) => {
     });
   }
 
-  return res.status(200).json({
-    message: "Cập nhật tin tức thành công",
-    data: updated,
-  });
+return res.status(200).json({
+  message: "Cập nhật tin tức thành công",
+  data: {
+    ...updated.get({ plain: true }),
+    image: getAvatarURL.getAvatarURL(updated.image || ""),
+  },
+});
+
 };
 
 

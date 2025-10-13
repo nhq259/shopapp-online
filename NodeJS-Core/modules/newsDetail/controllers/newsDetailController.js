@@ -1,5 +1,7 @@
 const db = require("models/index");
 const { Op } = require("sequelize");
+const getAvatarURL = require('helpers/imageHelper')
+
 
 // [GET] /api/news-details
 module.exports.getNewsDetails = async (req, res) => {
@@ -25,7 +27,7 @@ module.exports.getNewsDetails = async (req, res) => {
     data: newsDetails,
     currentPage: parseInt(page, 10),
     totalPages: Math.ceil(totalNewsDetails / pageSize),
-    totalNewsDetails,
+    total:totalNewsDetails,
   });
 };
 

@@ -58,7 +58,8 @@ ref: users.id < feedbacks.user_id
 
 table orders {
   id int [pk]
-  user_id int
+  user_id int [null]
+  session_id varchar [null]
   status int
   note text
   total int
@@ -66,7 +67,7 @@ table orders {
   updated_at datetime
 }
 
-ref: users.id < orders.user_id
+// ref: users.id < orders.user_id
 
 table order_details{
   id int [pk]
@@ -118,6 +119,16 @@ table banner_details {
   updated_at datetime
 }
 
+table product_images {
+  id int [pk]
+  product_id int
+  image_url varchar
+  created_at datetime
+  updated_at datetime
+}
+
+ref: products.id < product_images.product_id
+
 Table forgot_password {
   id int [pk]
   email varchar
@@ -129,3 +140,45 @@ Table forgot_password {
 
 ref: banners.id < banner_details.banner_id
 ref: products.id < banner_details.product_id
+
+table cart {
+  id int [pk]
+  session_id varchar
+  user_id int [null]
+  created_at datetime
+  updated_at datetime
+}
+
+table cart_items {
+  id int [pk]
+  cart_id int
+  product_id int
+  quantity int
+  created_at datetime
+  updated_at datetime
+}
+
+ref: cart.id < cart_items.cart_id
+ref: products.id < cart_items.product_id
+
+table attributes {
+  id int [pk]
+  name varchar
+  created_at datetime
+  updated_at datetime
+}
+
+table product_attribute_values {
+  id int [pk]
+  product_id int
+  attribute_id int
+  value text
+  created_at datetime
+  updated_at datetime
+}
+
+ref: attributes.id < product_attribute_values.attribute_id
+ref: products.id < product_attribute_values.product_id
+
+Trạng thái status order
+1.Pending , 2. Processing, 3 Shipped, 4 Delivered, 5 Canceled, 6 Refund , 7 Failed

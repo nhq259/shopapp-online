@@ -11,7 +11,7 @@ class updateNewsRequest {
     const schema = Joi.object({
       title: Joi.string().optional(), // có thể bỏ qua, nếu gửi phải là string
       content: Joi.string().optional(), // có thể bỏ qua, nếu gửi phải là string
-      image: Joi.string().uri().optional().allow(""), // có thể bỏ qua, nếu gửi phải là URL hoặc rỗng
+      image: Joi.string().optional().allow(""), // có thể bỏ qua, nếu gửi phải là URL hoặc rỗng
     });
 
     return schema.validate(data);

@@ -1,41 +1,59 @@
 const { Op } = require("sequelize");
 const db = require("models/index");
+const OrderStatus = require("constants/OrderStatus")
+const getAvatarURL = require('helpers/imageHelper')
+
+
 
 // [GET] /api/orders
 module.exports.getOrders = async (req, res) => {
-  const { search = "", page = 1 } = req.query;
-  const pageSize = 5;
-  const offset = (page - 1) * pageSize;
+    const { search = "", page = 1, status } = req.query;
+    const pageSize = 5;
+    const offset = (page - 1) * pageSize;
 
-  let whereClause = {};
-  if (search.trim() !== "") {
-    whereClause = {
-      [Op.or]: [{ status: { [Op.like]: `%${search}%` } }],
-    };
-  }
+    let whereClause = {};
 
-  const [orders, totalOrders] = await Promise.all([
-    db.Order.findAll({
-      where: whereClause,
-      limit: pageSize,
-      offset: offset,
-    }),
-    db.Order.count({ where: whereClause }),
-  ]);
+    // Lọc theo status nếu có
+    if (status) {
+      whereClause.status = status; // status từ query param
+    }
 
-  return res.status(200).json({
-    message: "Lấy danh sách đơn hàng thành công",
-    data: orders,
-    currentPage: parseInt(page, 10),
-    totalPages: Math.ceil(totalOrders / pageSize),
-    totalOrders,
-  });
+    // Tìm kiếm theo note nếu có
+    if (search.trim() !== "") {
+      whereClause = {
+        ...whereClause,
+        [Op.or]: [
+          { note: { [Op.like]: `%${search}%` } }
+        ],
+      };
+    }
+
+    const [orders, totalOrders] = await Promise.all([
+      db.Order.findAll({
+        where: whereClause,
+        limit: pageSize,
+        offset: offset,
+        order: [["createdAt", "DESC"]],
+      }),
+      db.Order.count({ where: whereClause }),
+    ]);
+
+    return res.status(200).json({
+      message: "Lấy danh sách đơn hàng thành công",
+      data: orders,
+      currentPage: parseInt(page, 10),
+      totalPages: Math.ceil(totalOrders / pageSize),
+      total:totalOrders,
+    });
+  
 };
 
 // [GET] /api/orders/:id
 module.exports.getOrderById = async (req, res) => {
   const { id } = req.params;
-  const order = await db.Order.findByPk(id);
+  const order = await db.Order.findByPk(id,{
+    include: [{ model: db.OrderDetail}],
+  });
 
   if (!order) {
     return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
@@ -47,6 +65,7 @@ module.exports.getOrderById = async (req, res) => {
   });
 };
 
+/*
 // [POST] /api/orders
 module.exports.insertOrder = async (req, res) => {
   const userId = req.body.user_id;
@@ -64,6 +83,7 @@ module.exports.insertOrder = async (req, res) => {
     return res.status(404).json({ message: "Không thể thêm mới đơn hàng" });
   }
 };
+*/
 
 // [PUT] /api/orders/:id
 module.exports.updateOrder = async (req, res) => {
@@ -87,13 +107,20 @@ module.exports.updateOrder = async (req, res) => {
 // [DELETE] /api/orders/:id
 module.exports.deleteOrder = async (req, res) => {
   const { id } = req.params;
-  const deleted = await db.Order.destroy({ where: { id } });
 
-  if (!deleted) {
+  // Tìm đơn hàng theo id
+  const order = await db.Order.findByPk(id);
+
+  if (!order) {
     return res.status(404).json({ message: "Không tìm thấy đơn hàng để xóa" });
   }
 
+  // Cập nhật trạng thái thay vì xóa cứng
+  order.status = OrderStatus.FAILED;
+  await order.save();
+
   return res.status(200).json({
-    message: "Xóa đơn hàng thành công",
+    message: "Xóa (soft delete) đơn hàng thành công",
+    data: order,
   });
 };

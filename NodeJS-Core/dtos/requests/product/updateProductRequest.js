@@ -13,6 +13,7 @@ class updateProductRequest {
     this.brand_id = data.brand_id;
     this.category_id = data.category_id;
     this.status = data.status;
+    this.attributes = data.attributes;
   }
 
   static validate(data) {
@@ -20,15 +21,21 @@ class updateProductRequest {
       name: Joi.string().optional(),
       price: Joi.number().positive().optional(),
       oldprice: Joi.number().positive().optional(),
-      image: Joi.string().uri().allow("").optional(),
+      image: Joi.string().allow("").optional(),
       description: Joi.string().optional(),
       specification: Joi.string().optional(),
       buyturn: Joi.number().integer().min(0).optional(),
       quantity: Joi.number().integer().min(0).optional(),
       brand_id: Joi.number().integer().optional(),
       category_id: Joi.number().integer().optional(),
-      status: Joi.string().valid("active", "inactive").optional() 
-
+      status: Joi.string().valid("active", "inactive").optional(),
+      attributes: Joi.array().items(
+          Joi.object({
+            name: Joi.string().required(), // Tên thuộc tính vdu man hinh , ram
+            value: Joi.string().required(), // Giá trị thuộc tính vdu 27" , 8gb
+          })
+        )
+        .optional(), // Mảng attributes là tùy chọn
     });
 
     return schema.validate(data);

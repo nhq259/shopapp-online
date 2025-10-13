@@ -1,9 +1,10 @@
 const { Op } = require("sequelize");
 const db = require("models/index");
+const getAvatarURL = require('helpers/imageHelper')
 
 // [GET] /api/order-details
 module.exports.getOrderDetails = async (req, res) => {
-  const orderDetail = await db.orderDetail.findAll();
+  const orderDetail = await db.OrderDetail.findAll();
 
   res.status(200).json({
     message: "Lấy danh sách chi tiết đơn hàng thành công",

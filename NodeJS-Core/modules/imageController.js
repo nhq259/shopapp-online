@@ -51,6 +51,8 @@ async function isImageInUse(basename) {
     { model: db.Product, fields: ["image"] },
     { model: db.News, fields: ["image"] },
     { model: db.Banner, fields: ["image"] },
+    { model: db.ProductImage, fields: ["image_url"] },
+
   ].filter(Boolean);
 
   for (const { model, fields } of refs) {

@@ -1,5 +1,7 @@
 const db = require("models/index");
 const { Op } = require("sequelize");
+const getAvatarURL = require('helpers/imageHelper')
+
 
 // [GET] /api/banner-details
 module.exports.getBannerDetails = async (req, res) => {
@@ -24,7 +26,7 @@ module.exports.getBannerDetails = async (req, res) => {
     data: bannerDetails,
     currentPage: parseInt(page, 10),
     totalPages: Math.ceil(totalBannerDetails / pageSize),
-    totalBannerDetails,
+    total: totalBannerDetails,
   });
 };
 
@@ -54,8 +56,6 @@ module.exports.getBannerDetailById = async (req, res) => {
 // [POST] /api/banner-details
 module.exports.insertBannerDetail = async (req, res) => {
   const { product_id, banner_id } = req.body;
-
-  
 
   // Check product tồn tại
   const product = await db.Product.findByPk(product_id);
