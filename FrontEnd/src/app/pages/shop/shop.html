@@ -1,0 +1,151 @@
+<!-- Page Header Start -->
+<div class="container-fluid bg-secondary mb-5">
+  <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+    <h1 class="font-weight-semi-bold text-uppercase mb-3">Our Shop</h1>
+    <div class="d-inline-flex">
+      <p class="m-0"><a href="javascript:void(0)">Home</a></p>
+      <p class="m-0 px-2">-</p>
+      <p class="m-0">Shop</p>
+    </div>
+  </div>
+</div>
+<!-- Page Header End -->
+
+
+<!-- Shop Start -->
+<div class="container-fluid pt-5">
+  <div class="row px-xl-5">
+
+    <!-- Shop Sidebar Start -->
+    <div class="col-lg-3 col-md-12">
+
+      <!-- Price Filter -->
+      <div class="border-bottom mb-4 pb-4">
+        <h5 class="font-weight-semi-bold mb-4">Price</h5>
+        <select class="form-control" [(ngModel)]="selectedPrice" (change)="onFilterChange()">
+          <option value="">All Price</option>
+          <option value="0-5000000">Dưới 5 triệu</option>
+          <option value="5000000-10000000">5 - 10 triệu</option>
+          <option value="10000000-15000000">10 - 15 triệu</option>
+          <option value="15000000-20000000">15 - 20 triệu</option>
+          <option value="20000000-999999999">Trên 20 triệu</option>
+        </select>
+      </div>
+      <!-- Price Filter End -->
+
+      <!-- Brand Filter -->
+      <div class="border-bottom mb-4 pb-4">
+        <h5 class="font-weight-semi-bold mb-4">Filter by brand</h5>
+        <select class="form-control" [(ngModel)]="selectedBrand" (change)="onFilterChange()">
+          <option value="">All Brands</option>
+          <option *ngFor="let b of brands" [value]="b.id">
+            {{ b.name }}
+          </option>
+        </select>
+      </div>
+      <!-- Brand Filter End -->
+
+      <!-- Category Filter -->
+      <div class="border-bottom mb-4 pb-4">
+        <h5 class="font-weight-semi-bold mb-4">Filter by category</h5>
+        <select class="form-control" [(ngModel)]="selectedCategory" (change)="onFilterChange()">
+          <option value="">All Categories</option>
+          <option *ngFor="let c of categories" [value]="c.id">
+            {{ c.name }}
+          </option>
+        </select>
+      </div>
+      <!-- Category Filter End -->
+
+    </div>
+    <!-- Shop Sidebar End -->
+
+
+    <!-- Products Section -->
+    <div class="col-lg-9 col-md-12">
+      <div class="row pb-3">
+
+        <!-- Search -->
+        <div class="col-12 pb-1">
+          <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search by name" [(ngModel)]="searchTerm"
+                (input)="onSearch()" />
+              <div class="input-group-append">
+                <span class="input-group-text bg-transparent text-primary">
+                  <i class="fa fa-search"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product List -->
+        <div class="col-lg-4 col-md-6 col-sm-12 pb-1" *ngFor="let product of filteredProducts">
+          <div class="card product-item border-0 mb-4 shadow-sm">
+
+            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+              <img class="img-fluid w-100" [src]="product.image || 'assets/img/default-product.jpg'"
+                [alt]="product.name" style="height: 250px; object-fit: cover;" />
+            </div>
+
+            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+              <h6 class="text-truncate mb-3">{{ product.name }}</h6>
+              <div class="d-flex justify-content-center">
+                <h6 class="text-danger">{{ formatVND(product.price) }}</h6>
+                <h6 class="text-muted ml-2"><del>{{ formatVND(product.oldprice) }}</del></h6>
+              </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-between bg-light border">
+              <a [routerLink]="['/products', product.id]" class="btn btn-sm text-dark p-0">
+                <i class="fas fa-eye text-primary mr-1"></i>
+                View Detail
+              </a>
+              <a href="javascript:void(0)" class="btn btn-sm text-dark p-0" (click)="addToCart(product)">
+                <i class="fas fa-shopping-cart text-primary mr-1"></i>
+                Add To Cart
+              </a>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- No Product -->
+        <div class="col-12 text-center" *ngIf="filteredProducts.length === 0">
+          <p class="text-muted mt-5">No products found.</p>
+        </div>
+
+        <!-- Pagination -->
+        <div class="col-12 pb-1 mt-3">
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center mb-3">
+
+              <!-- Prev -->
+              <li class="page-item" [class.disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+                <a class="page-link" style="cursor:pointer">&laquo;</a>
+              </li>
+
+              <!-- Page Numbers -->
+              <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+                [class.active]="currentPage === i + 1" (click)="goToPage(i + 1)">
+                <a class="page-link" style="cursor:pointer">{{ i + 1 }}</a>
+              </li>
+
+              <!-- Next -->
+              <li class="page-item" [class.disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+                <a class="page-link" style="cursor:pointer">&raquo;</a>
+              </li>
+
+            </ul>
+          </nav>
+        </div>
+
+      </div>
+    </div>
+    <!-- Products End -->
+
+  </div>
+</div>
+<!-- Shop End -->

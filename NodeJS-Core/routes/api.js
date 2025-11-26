@@ -53,6 +53,10 @@ const UserRole = require("constants/UserRole");
 
 const router = express.Router({ mergeParams: true });
 
+// Add headers before the routes are defined
+
+
+
 // ===== EXAMPLE Request, make this commented =====
 // router.group("/posts",middlewares([authenticated, role("owner")]),(router) => {
 //   router.post("/create",validate([createPostRequest]),postsController.create);
@@ -87,7 +91,7 @@ router.put(
 );
 
 // Product Routes
-router.get("/products", asyncHandler(productController.getProducts));
+router.get("/products",  asyncHandler(productController.getProducts));
 router.get("/products/:id", asyncHandler(productController.getProductById));
 router.post(
   "/products",
@@ -223,7 +227,7 @@ router.get("/carts", asyncHandler(cartController.getCarts));
 router.get("/carts/:id", asyncHandler(cartController.getCartById));
 router.post(
   "/carts",
-  requireRoles([UserRole.ADMIN]),
+  // requireRoles([UserRole.ADMIN,UserRole.USER]),
   validate(insertCartRequest),
   asyncHandler(cartController.insertCart)
 );

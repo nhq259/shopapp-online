@@ -47,6 +47,7 @@ module.exports.registerUser = async (req, res) => {
   const hasPhone = !!(phone && String(phone).trim());
   if (!hasEmail && !hasPhone) {
     return res.status(400).json({
+      code:400,
       message: "Phải cung cấp ít nhất một trong hai: email hoặc số điện thoại",
     });
   }
@@ -55,7 +56,7 @@ module.exports.registerUser = async (req, res) => {
   if (hasEmail) {
     const existingEmail = await db.User.findOne({ where: { email } });
     if (existingEmail) {
-      return res.status(400).json({ message: "Email đã tồn tại" });
+      return res.status(400).json({code:400, message: "Email đã tồn tại" });
     }
   }
 
@@ -63,7 +64,7 @@ module.exports.registerUser = async (req, res) => {
   if (hasPhone) {
     const existingPhone = await db.User.findOne({ where: { phone } });
     if (existingPhone) {
-      return res.status(400).json({ message: "Số điện thoại đã tồn tại" });
+      return res.status(400).json({ code:400,message: "Số điện thoại đã tồn tại" });
     }
   }
 
@@ -99,7 +100,7 @@ module.exports.login = async (req, res) => {
   const hasPhone = !!(phone && String(phone).trim());
   if ((!hasEmail && !hasPhone) || !password) {
     return res.status(400).json({
-      message: "Vui lòng cung cấp email hoặc số điện thoại và mật khẩu.",
+      code:400,message: "Vui lòng cung cấp email hoặc số điện thoại và mật khẩu.",
     });
   }
 
@@ -113,18 +114,22 @@ module.exports.login = async (req, res) => {
   const user = await db.User.findOne({ where });
 
   // 3) Không tìm thấy hoặc sai mật khẩu
-  if (!user) {
-    return res
-      .status(400)
-      .json({ message: "Thông tin đăng nhập không chính xác." });
-  }
+ if (!user) {
+  return res.status(400).json({
+    code: 400,
+    message: "Thông tin đăng nhập không chính xác."
+  });
+}
+
 
   const match = await argon2.verify(user.password, password);
-  if (!match) {
-    return res
-      .status(400)
-      .json({ message: "Thông tin đăng nhập không chính xác." });
-  }
+ if (!match) {
+  return res.status(400).json({
+    code: 400,
+    message: "Thông tin đăng nhập không chính xác."
+  });
+}
+
 
   // 4) Tạo JWT
   const payload = {
@@ -158,6 +163,7 @@ module.exports.updateUser = async (req, res) => {
   const extra = Object.keys(req.body || {}).filter((k) => !allowed.includes(k));
   if (extra.length) {
     return res.status(400).json({
+      code:400,
       message: "Các trường sau không được phép cập nhật",
       fields: extra,
     });
@@ -167,7 +173,7 @@ module.exports.updateUser = async (req, res) => {
   if (!user)
     return res
       .status(404)
-      .json({ message: "Không tìm thấy người dùng để cập nhật" });
+      .json({ code:400,message: "Không tìm thấy người dùng để cập nhật" });
 
   // Không có dữ liệu hợp lệ để cập nhật
   if (
@@ -177,7 +183,7 @@ module.exports.updateUser = async (req, res) => {
   ) {
     return res
       .status(400)
-      .json({ message: "Không có dữ liệu hợp lệ để cập nhật" });
+      .json({ code:400,message: "Không có dữ liệu hợp lệ để cập nhật" });
   }
 
   const updateData = {};
@@ -189,11 +195,11 @@ module.exports.updateUser = async (req, res) => {
     if (!old_password)
       return res
         .status(400)
-        .json({ message: "Vui lòng cung cấp mật khẩu cũ để đổi mật khẩu" });
+        .json({ code:400,message: "Vui lòng cung cấp mật khẩu cũ để đổi mật khẩu" });
 
     const ok = await argon2.verify(user.password, String(old_password));
     if (!ok)
-      return res.status(400).json({ message: "Mật khẩu cũ không chính xác" });
+      return res.status(400).json({ code:400,message: "Mật khẩu cũ không chính xác" });
 
     updateData.password = await argon2.hash(String(new_password));
     updateData.password_changed_at = new Date();

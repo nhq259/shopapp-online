@@ -1,0 +1,73 @@
+<div class="container py-5" *ngIf="product">
+
+  <div class="row">
+
+    <!-- IMAGE -->
+    <div class="col-lg-6">
+      <img [src]="product.image"
+           class="img-fluid rounded shadow-sm"
+           style="width: 100%; max-height: 450px; object-fit: cover;">
+    </div>
+
+    <!-- PRODUCT INFO -->
+    <div class="col-lg-6">
+
+      <h2 class="mb-3">{{ product.name }}</h2>
+
+      <h3 class="text-danger">
+        {{ formatVND(product.price) }}
+      </h3>
+
+      <h5 class="text-muted">
+        <del *ngIf="product.oldprice">{{ formatVND(product.oldprice) }}</del>
+      </h5>
+
+      <p class="mt-4">{{ product.description }}</p>
+
+      <!-- QUANTITY SELECTOR -->
+      <div class="mt-4">
+        <h5 class="font-weight-bold mb-2">Số lượng:</h5>
+
+        <div class="input-group" style="width: 150px;">
+          <!-- Giảm -->
+          <button class="btn btn-outline-secondary"
+                  (click)="decreaseQty()">
+            -
+          </button>
+
+          <!-- Nhập số trực tiếp -->
+          <input type="number"
+                 [(ngModel)]="quantity"
+                 (input)="validateQty()"
+                 class="form-control text-center"
+                 min="1"
+                 [max]="product.quantity">
+
+          <!-- Tăng -->
+          <button class="btn btn-outline-secondary"
+                  (click)="increaseQty()">
+            +
+          </button>
+        </div>
+
+        <div class="text-muted mt-1">
+          Còn lại: {{ product.quantity }} sản phẩm
+        </div>
+      </div>
+
+      <!-- ADD TO CART BUTTON -->
+      <button class="btn btn-primary btn-lg mt-4"
+              (click)="addToCart()">
+        <i class="fas fa-shopping-cart mr-2"></i> Add to Cart
+      </button>
+
+    </div>
+  </div>
+
+  <!-- SPECIFICATION -->
+  <div class="mt-5">
+    <h4>Specifications</h4>
+    <p>{{ product.specification }}</p>
+  </div>
+
+</div>

@@ -52,7 +52,12 @@ module.exports.getOrders = async (req, res) => {
 module.exports.getOrderById = async (req, res) => {
   const { id } = req.params;
   const order = await db.Order.findByPk(id,{
-    include: [{ model: db.OrderDetail}],
+    include: [{ model: db.OrderDetail, as:"order_details",include: [
+          {
+            model: db.Product,
+            as: "product"       // nếu OrderDetail liên kết với Product có alias
+          }
+        ]}],
   });
 
   if (!order) {

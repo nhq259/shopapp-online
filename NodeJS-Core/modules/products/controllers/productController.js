@@ -5,7 +5,10 @@ const getAvatarURL = require("helpers/imageHelper");
 
 // [GET] /api/products
 module.exports.getProducts = async (req, res) => {
-  const { search = "", page = 1 } = req.query;
+  const { search = "", page = 1,category,
+      brand,
+      price_min,
+      price_max } = req.query;
   const pageSize = 5;
   const offset = (page - 1) * pageSize;
 
@@ -18,6 +21,24 @@ module.exports.getProducts = async (req, res) => {
           { description: { [db.Sequelize.Op.like]: `%${search}%` } },
           { specification: { [db.Sequelize.Op.like]: `%${search}%` } },
         ],
+      });
+    }
+
+    // 🔍 CATEGORY FILTER
+    if (category) {
+      andConds.push({ category_id: category });
+    }
+
+    // 🔍 BRAND FILTER
+    if (brand) {
+      andConds.push({ brand_id: brand });
+    }
+    // 🔍 PRICE RANGE FILTER
+    if (price_min && price_max) {
+      andConds.push({
+        price: {
+          [Op.between]: [Number(price_min), Number(price_max)]
+        }
       });
     }
 

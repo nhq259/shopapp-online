@@ -32,7 +32,14 @@ module.exports.getCarts = async (req, res) => {
 module.exports.getCartById = async (req, res) => {
   const { id } = req.params;
   const cart = await db.Cart.findByPk(id, {
-    include: [{ model: db.CartItem}],
+    include: [{ model: db.CartItem,
+      include: [
+          {
+            model: db.Product,
+            attributes: ["id", "name", "price", "image"]
+          }
+        ]
+    }],
   });
 
   if (!cart) {
@@ -45,50 +52,110 @@ module.exports.getCartById = async (req, res) => {
   });
 };
 
-// [POST] /api/carts
+// // [POST] /api/carts
+// module.exports.insertCart = async (req, res) => {
+//   const { session_id, user_id } = req.body;
+
+//   //  Kiểm tra logic: chỉ được có 1 trong 2 (XOR)
+//   if ((!session_id && !user_id) || (session_id && user_id)) {
+//     return res.status(400).json({
+//       message: "Phải có duy nhất một trong hai: session_id hoặc user_id",
+//     });
+//   }
+
+//   //  Nếu có session_id → check trùng
+//   if (session_id) {
+//     const existing = await db.Cart.findOne({ where: { session_id } });
+//     if (existing) {
+//       return res.status(400).json({
+//         message: "Session_id đã tồn tại, không thể tạo giỏ hàng mới",
+//       });
+//     }
+//   }
+
+//   //  Nếu có user_id → check trùng
+//   if (user_id) {
+//     const existing = await db.Cart.findOne({ where: { user_id } });
+//     if (existing) {
+//       return res.status(400).json({
+//         message: "User_id đã tồn tại, không thể tạo giỏ hàng mới",
+//       });
+//     }
+//   }
+
+//   // Tạo giỏ hàng
+//   const cart = await db.Cart.create({
+//     session_id: session_id || null,
+//     user_id: user_id || null,
+//     created_at: new Date(),
+//     updated_at: new Date(),
+//   });
+
+//   return res.status(201).json({
+//     message: "Tạo giỏ hàng thành công",
+//     data: cart,
+//   });
+// };
+
+// [POST] /api/carts  → GET OR CREATE CART
 module.exports.insertCart = async (req, res) => {
   const { session_id, user_id } = req.body;
 
-  //  Kiểm tra logic: chỉ được có 1 trong 2 (XOR)
+  // ❗ Bắt buộc 1 trong 2: session hoặc user
   if ((!session_id && !user_id) || (session_id && user_id)) {
     return res.status(400).json({
       message: "Phải có duy nhất một trong hai: session_id hoặc user_id",
     });
   }
 
-  //  Nếu có session_id → check trùng
-  if (session_id) {
-    const existing = await db.Cart.findOne({ where: { session_id } });
-    if (existing) {
-      return res.status(400).json({
-        message: "Session_id đã tồn tại, không thể tạo giỏ hàng mới",
-      });
+  try {
+    let existing = null;
+
+    // 🔎 1) Check nếu là user login → kiểm tra user_id
+    if (user_id) {
+      existing = await db.Cart.findOne({ where: { user_id } });
+
+      if (existing) {
+        return res.status(200).json({
+          message: "Lấy giỏ hàng thành công",
+          data: existing,
+        });
+      }
     }
-  }
 
-  //  Nếu có user_id → check trùng
-  if (user_id) {
-    const existing = await db.Cart.findOne({ where: { user_id } });
-    if (existing) {
-      return res.status(400).json({
-        message: "User_id đã tồn tại, không thể tạo giỏ hàng mới",
-      });
+    // 🔎 2) Nếu là guest → kiểm tra session_id
+    if (session_id) {
+      existing = await db.Cart.findOne({ where: { session_id } });
+
+      if (existing) {
+        return res.status(200).json({
+          message: "Lấy giỏ hàng thành công",
+          data: existing,
+        });
+      }
     }
+
+    // ➕ 3) Không có cart → tạo cart mới
+    const cart = await db.Cart.create({
+      session_id: session_id || null,
+      user_id: user_id || null,
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
+
+    return res.status(201).json({
+      message: "Tạo giỏ hàng thành công",
+      data: cart,
+    });
+
+  } catch (error) {
+    console.error("Insert Cart Error:", error);
+    return res.status(500).json({
+      message: "Có lỗi xảy ra khi xử lý giỏ hàng",
+    });
   }
-
-  // Tạo giỏ hàng
-  const cart = await db.Cart.create({
-    session_id: session_id || null,
-    user_id: user_id || null,
-    created_at: new Date(),
-    updated_at: new Date(),
-  });
-
-  return res.status(201).json({
-    message: "Tạo giỏ hàng thành công",
-    data: cart,
-  });
 };
+
 
 // [POST] /api/carts/checkout
 module.exports.checkoutCart = async (req, res) => {
@@ -148,6 +215,25 @@ module.exports.checkoutCart = async (req, res) => {
     }));
 
     await db.OrderDetail.bulkCreate(orderDetails, { transaction });
+
+     // 5️⃣ Giảm tồn kho sản phẩm
+    for (const item of cart.CartItems) {
+      const product = item.Product;
+      const newQuantity = product.quantity - item.quantity;
+
+      if (newQuantity < 0) {
+        // rollback ngay nếu tồn kho không đủ
+        await transaction.rollback();
+        return res.status(400).json({
+          message: `Sản phẩm "${product.name}" không đủ hàng. Hiện còn ${product.quantity}`,
+        });
+      }
+
+      await db.Product.update(
+        { quantity: newQuantity, updated_at: new Date() },
+        { where: { id: product.id }, transaction }
+      );
+    }
 
     // 5. Xóa cartItems và cart
     await db.CartItem.destroy({ where: { cart_id }, transaction });

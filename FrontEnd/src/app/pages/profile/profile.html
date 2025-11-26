@@ -1,0 +1,79 @@
+<!-- Page Header -->
+<div class="container-fluid bg-secondary mb-5">
+  <div class="d-flex flex-column align-items-center justify-content-center" style="min-height:300px">
+    <h1 class="font-weight-semi-bold text-uppercase mb-3">User Profile</h1>
+    <div class="d-inline-flex">
+      <p class="m-0"><a routerLink="/">Home</a></p>
+      <p class="m-0 px-2">-</p>
+      <p class="m-0">Profile</p>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Content -->
+<div class="container py-5" *ngIf="user">
+
+  <div class="row">
+
+    <!-- Left: Avatar -->
+    <div class="col-lg-4 text-center">
+      <img [src]="user.avatar"
+           alt="Avatar"
+           class="rounded-circle shadow-sm"
+           style="width:160px;height:160px;object-fit:cover;">
+
+      <h3 class="mt-3">{{ user.name }}</h3>
+      <p class="text-muted">Role: {{ user.role === 1 ? 'User' : 'Admin' }}</p>
+      <p><span class="badge badge-success" *ngIf="user.status === 'active'">Active</span></p>
+    </div>
+
+    <!-- Right: User Details -->
+    <div class="col-lg-8">
+
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Account Information</h4>
+        </div>
+
+        <div class="card-body">
+
+          <div class="row mb-3">
+            <div class="col-md-4 font-weight-bold">Email:</div>
+            <div class="col-md-8">{{ user.email }}</div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-4 font-weight-bold">Full Name:</div>
+            <div class="col-md-8">{{ user.name }}</div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-4 font-weight-bold">Phone:</div>
+            <div class="col-md-8">{{ user.phone }}</div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-4 font-weight-bold">Status:</div>
+            <div class="col-md-8">
+              <span class="badge badge-success" *ngIf="user.status === 'active'">Active</span>
+              <span class="badge badge-danger" *ngIf="user.status !== 'active'">Inactive</span>
+            </div>
+          </div>
+
+
+
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="mt-4 d-flex">
+        <button class="btn btn-primary mr-3" (click)="goToEdit()">Edit Profile</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!user" class="text-center mt-5">
+  <h4>Loading user data…</h4>
+</div>
