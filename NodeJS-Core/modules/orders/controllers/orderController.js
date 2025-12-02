@@ -70,6 +70,38 @@ module.exports.getOrderById = async (req, res) => {
   });
 };
 
+// [GET] /api/orders/user/:userId
+module.exports.getOrdersByUser = async (req, res) => {
+  const { userId } = req.params;
+
+  // chỉ user hoặc admin được xem
+  if (req.user.id != userId && req.user.role !== 2) { // role 1 = ADMIN?
+    return res.status(403).json({
+      message: "Chỉ người dùng hoặc admin mới được xem danh sách đơn hàng"
+    });
+  }
+
+  const orders = await db.Order.findAll({
+    where: { user_id: userId },
+    order: [["createdAt", "DESC"]],
+    include: [
+      {
+        model: db.OrderDetail,
+        as: "order_details",
+        include: [
+          { model: db.Product, as: "product" }
+        ]
+      }
+    ]
+  });
+
+  return res.status(200).json({
+    message: "Danh sách đơn hàng của người dùng",
+    data: orders
+  });
+};
+
+
 /*
 // [POST] /api/orders
 module.exports.insertOrder = async (req, res) => {

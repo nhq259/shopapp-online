@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../../services/login';
 import { Router } from '@angular/router';
 import { CartService } from '../../services/cart';
+import { OrderService } from '../../services/order';
 
 @Component({
   selector: 'app-header',
@@ -14,11 +15,14 @@ export class Header implements OnInit {
   isLogin: any;
   userName = '';
   userAvatar = '';
+  orderCount = 0;
+  userId = 0;
 
   constructor(
     private loginService: LoginService,
     private router: Router,
-    private cartService: CartService
+    private cartService: CartService,
+    private orderService: OrderService
   ) {}
 
   ngOnInit(): void {
@@ -42,9 +46,26 @@ export class Header implements OnInit {
     this.isLogin = this.loginService.checkLogin();
     if (this.isLogin) {
       const user = this.loginService.getUser();
+       this.userId = user.id;
       this.userName = user.name;
       this.userAvatar = user.avatar;
+      // ⭐ Load số đơn hàng người dùng đã đặt
+      this.loadOrderCount(this.userId);
     }
+  }
+
+  /* -----------------------
+     ⭐ Lấy số đơn hàng của user
+     ----------------------- */
+  loadOrderCount(userId: number) {
+    this.orderService.getOrdersByUser(userId).subscribe({
+      next: (res: any) => {
+        this.orderCount = res.data.length;
+      },
+      error: () => {
+        this.orderCount = 0;
+      }
+    });
   }
 
   onLogout() {

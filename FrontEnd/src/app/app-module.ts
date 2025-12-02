@@ -17,6 +17,8 @@ import { Checkout } from './pages/checkout/checkout';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { Profile } from './pages/profile/profile';
 import { EditProfile } from './pages/profile/edit-profile/edit-profile';
+import { Orders } from './pages/orders/orders';
+import { OrderDetail } from './pages/orders/order-detail/order-detail';
 
 @NgModule({
   declarations: [
@@ -32,6 +34,8 @@ import { EditProfile } from './pages/profile/edit-profile/edit-profile';
     Checkout,
     Profile,
     EditProfile,
+    Orders,
+    OrderDetail,
   ],
   imports: [
     BrowserModule,

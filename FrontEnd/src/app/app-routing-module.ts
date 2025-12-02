@@ -9,6 +9,8 @@ import { Cart } from './pages/cart/cart';
 import { Checkout } from './pages/checkout/checkout';
 import { Profile } from './pages/profile/profile';
 import { EditProfile } from './pages/profile/edit-profile/edit-profile';
+import { Orders } from './pages/orders/orders';
+import { OrderDetail } from './pages/orders/order-detail/order-detail';
 
 const routes: Routes = [
   {path: '',component: Home},
@@ -20,9 +22,8 @@ const routes: Routes = [
   {path: 'checkout',component: Checkout},
   {path: 'profile',component: Profile},
   {path: 'profile/edit',component: EditProfile},
-
-
-
+  {path: 'orders',component: Orders},
+  {path: 'orders/:id',component: OrderDetail},
 
 
 

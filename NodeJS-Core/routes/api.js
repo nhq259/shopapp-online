@@ -180,6 +180,12 @@ router.delete(
 // Order Routes
 router.get("/orders", asyncHandler(orderController.getOrders));
 router.get("/orders/:id", asyncHandler(orderController.getOrderById));
+router.get(
+  "/orders/user/:userId",
+  requireRoles([UserRole.ADMIN, UserRole.USER]),
+  asyncHandler(orderController.getOrdersByUser)
+);
+
 // router.post(
 //   "/orders",
 //   validate(insertOrderRequest),

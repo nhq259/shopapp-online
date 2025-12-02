@@ -34,10 +34,11 @@
 
 
         <div class="col-lg-3 col-6 text-right">
-            <a routerLink="/wishlist" class="btn border">
-                <i class="fas fa-heart text-primary"></i>
-                <span class="badge">0</span>
+            <a routerLink="/orders" class="btn border">
+                <i class="fas fa-shopping-bag text-primary"></i>
+                <span class="badge">{{ orderCount }}</span>
             </a>
+
             <a class="btn border" (click)="goToCart()">
                 <i class="fas fa-shopping-cart text-primary"></i>
                 <span class="badge">{{ cartCount }}</span>
