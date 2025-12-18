@@ -104,6 +104,13 @@
                             <a style="cursor:pointer" class="nav-item nav-link text-danger ml-3"
                                 (click)="onLogout()">Logout</a>
                         </ng-container>
+                              <a
+    *ngIf="isAdmin"
+    routerLink="/admin"
+    class="nav-item nav-link text-warning ml-3"
+  >
+    Admin
+  </a>
 
                     </div>
 

@@ -1,0 +1,54 @@
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-between mb-3">
+    <h3>Quản lý thương hiệu</h3>
+    <button class="btn btn-primary" (click)="create()">+ Thêm thương hiệu</button>
+  </div>
+
+  <input
+    type="text"
+    class="form-control mb-3"
+    placeholder="Tìm theo tên thương hiệu..."
+    [(ngModel)]="search"
+    (input)="onSearch()"
+  />
+
+  <table class="table table-hover text-center">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Ảnh</th>
+        <th>Tên</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let b of brands">
+        <td>{{ b.id }}</td>
+        <td>
+          <img [src]="b.image" width="60" height="60" style="object-fit:contain">
+        </td>
+        <td><b>{{ b.name }}</b></td>
+        <td>
+          <button class="btn btn-info btn-sm me-1" (click)="view(b.id)">Chi tiết</button>
+          <button class="btn btn-warning btn-sm me-1" (click)="edit(b.id)">Sửa</button>
+          <!-- <button class="btn btn-danger btn-sm" (click)="delete(b.id)">Xóa</button> -->
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <nav *ngIf="totalPages > 1">
+    <ul class="pagination justify-content-center">
+      <li class="page-item"
+          *ngFor="let p of [].constructor(totalPages); let i = index"
+          [class.active]="page === i + 1">
+        <a class="page-link" (click)="loadBrands(i + 1)">
+          {{ i + 1 }}
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+</div>

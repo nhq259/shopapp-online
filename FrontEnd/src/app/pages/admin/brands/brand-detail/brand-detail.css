@@ -1,0 +1,64 @@
+/* ===== CARD ===== */
+.brand-detail-card {
+  border-radius: 18px;
+  border: none;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== IMAGE ===== */
+.image-wrapper {
+  width: 160px;
+  height: 160px;
+  border-radius: 16px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  margin: auto;
+}
+
+.image-wrapper img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* ===== INFO ROW ===== */
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.label {
+  width: 160px;
+  font-weight: 600;
+  color: #777;
+  font-size: 14px;
+}
+
+.value {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* ===== HIGHLIGHT NAME ===== */
+.value.highlight {
+  font-size: 18px;
+  font-weight: 700;
+  color: #d19b98;
+}
+
+/* ===== BUTTON ===== */
+.btn-outline-primary {
+  border-color: #d19b98;
+  color: #d19b98;
+  border-radius: 10px;
+}
+
+.btn-outline-primary:hover {
+  background-color: #d19b98;
+  color: #fff;
+}

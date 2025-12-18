@@ -8,6 +8,8 @@ class ResponseUser {
     this.phone = user.phone;
     this.status = user.status;
     this.deleted = user.deleted;
+    this.createdAt = user.createdAt;
+    this.updatedAt = user.updatedAt;
   }
 }
 

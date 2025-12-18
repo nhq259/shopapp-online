@@ -1,0 +1,151 @@
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-between mb-3">
+    <h3>Quản lý sản phẩm</h3>
+
+    <button class="btn btn-primary" (click)="createProduct()">
+      + Thêm sản phẩm
+    </button>
+  </div>
+
+  <!-- FILTER BAR -->
+<div class="card p-3 mb-3">
+
+  <div class="row g-3 align-items-end">
+
+    <!-- SEARCH -->
+    <div class="col-md-3">
+      <label>Tìm kiếm</label>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Tên / mô tả sản phẩm..."
+        [(ngModel)]="filters.search">
+    </div>
+
+    <!-- CATEGORY -->
+    <div class="col-md-2">
+      <label>Danh mục</label>
+      <select class="form-select" [(ngModel)]="filters.category">
+        <option value="">Tất cả</option>
+        <option *ngFor="let c of categories" [value]="c.id">
+          {{ c.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- BRAND -->
+    <div class="col-md-2">
+      <label>Thương hiệu</label>
+      <select class="form-select" [(ngModel)]="filters.brand">
+        <option value="">Tất cả</option>
+        <option *ngFor="let b of brands" [value]="b.id">
+          {{ b.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- PRICE MIN -->
+    <div class="col-md-2">
+      <label>Giá từ</label>
+      <input type="number" class="form-control"
+             [(ngModel)]="filters.price_min">
+    </div>
+
+    <!-- PRICE MAX -->
+    <div class="col-md-2">
+      <label>Đến</label>
+      <input type="number" class="form-control"
+             [(ngModel)]="filters.price_max">
+    </div>
+
+    <!-- ACTION -->
+    <div class="col-md-1 d-flex gap-2">
+      <button class="btn btn-primary w-100" (click)="applyFilter()">
+        Lọc
+      </button>
+    </div>
+
+    <div class="col-md-1">
+      <button class="btn btn-primary " (click)="resetFilter()">
+        Reset
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+  <table class="table table-bordered table-hover text-center">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Ảnh</th>
+        <th>Tên sản phẩm</th>
+        <th>Giá cũ</th>
+        <th>Giá mới</th>
+        <th>Tồn kho</th>
+        <th>Danh mục</th>
+        <th>Thương hiệu</th>
+        <th>Trạng thái</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let p of products">
+        <td>{{ p.id }}</td>
+        <td>
+          <img [src]="p.image" width="60" height="60" style="object-fit:cover" />
+        </td>
+        <td>{{ p.name }}</td>
+        <td>{{ p.oldprice | number }} ₫</td>
+        <td>{{ p.price | number }} ₫</td>
+        <td>{{ p.quantity }}</td>
+        <td>{{ p.Category?.name || '-' }}</td>
+        <td>{{ p.Brand?.name || '-' }}</td>
+        <td>
+          <span class="status-badge clickable" [ngClass]="p.status" (click)="toggleStatus(p)"
+            title="Click để thay đổi trạng thái">
+            {{ p.status }}
+          </span>
+
+        </td>
+
+
+        <td>
+          <button class="btn btn-sm btn-info mx-1" (click)="viewDetail(p.id)">Chi tiết</button>
+          <button class="btn btn-sm btn-warning mx-1" (click)="editProduct(p.id)">Sửa</button>
+          <button class="btn btn-sm btn-danger mx-1" (click)="deleteProduct(p.id)">Xóa</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- PAGINATION -->
+  <nav *ngIf="totalPages > 1">
+    <ul class="pagination justify-content-center">
+
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <a class="page-link" style="cursor:pointer" (click)="loadProducts(currentPage - 1)">
+          &laquo;
+        </a>
+      </li>
+
+      <li class="page-item" *ngFor="let p of [].constructor(totalPages); index as i"
+        [class.active]="currentPage === i + 1">
+        <a class="page-link" style="cursor:pointer" (click)="loadProducts(i + 1)">
+          {{ i + 1 }}
+        </a>
+      </li>
+
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <a class="page-link" style="cursor:pointer" (click)="loadProducts(currentPage + 1)">
+          &raquo;
+        </a>
+      </li>
+
+    </ul>
+  </nav>
+
+</div>

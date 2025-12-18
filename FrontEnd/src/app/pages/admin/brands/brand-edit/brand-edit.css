@@ -1,0 +1,48 @@
+.brand-form-card {
+  border-radius: 18px;
+  border: none;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.form-control {
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.form-control:focus {
+  border-color: #d19b98;
+  box-shadow: 0 0 0 0.15rem rgba(209, 155, 152, 0.3);
+}
+
+.image-preview {
+  width: 160px;
+  height: 160px;
+  border-radius: 16px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.btn-primary {
+  background-color: #d19b98;
+  border-color: #d19b98;
+  border-radius: 10px;
+}
+
+.btn-primary:hover {
+  background-color: #c18986;
+  border-color: #c18986;
+}

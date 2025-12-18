@@ -69,6 +69,11 @@ router.group("/example", validate([]), (router) => {
 });
 // User Routes
 router.get(
+  "/admin/users",
+  requireRoles([UserRole.ADMIN]),
+  asyncHandler(UserController.getAllUsers)
+);
+router.get(
   "/users/:id",
   requireRoles([UserRole.ADMIN, UserRole.USER]),
   asyncHandler(UserController.getUserById)
@@ -89,9 +94,21 @@ router.put(
   // validate(updateProductRequest),
   asyncHandler(UserController.updateUser)
 );
+router.delete(
+  "/admin/users/:id",
+  requireRoles([UserRole.ADMIN]),
+  asyncHandler(UserController.softDeleteUser)
+);
+router.patch(
+  '/users/:id/status',
+  requireRoles([UserRole.ADMIN]),
+  asyncHandler(UserController.toggleUserStatus)
+);
 
 // Product Routes
 router.get("/products",  asyncHandler(productController.getProducts));
+router.get("/admin/products/search",  asyncHandler(productController.searchProducts));
+router.get("/admin/products",requireRoles([UserRole.ADMIN]),  asyncHandler(productController.getProductsAdmin));
 router.get("/products/:id", asyncHandler(productController.getProductById));
 router.post(
   "/products",
@@ -106,6 +123,11 @@ router.put(
   validateImageExists,
   validate(updateProductRequest),
   asyncHandler(productController.updateProduct)
+);
+router.patch(
+  '/products/:id/status',
+  requireRoles([UserRole.ADMIN]),
+  asyncHandler(productController.toggleProductStatus)
 );
 router.delete(
   "/products/:id",

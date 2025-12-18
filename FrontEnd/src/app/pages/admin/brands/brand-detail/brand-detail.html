@@ -1,0 +1,55 @@
+<div class="container mt-4" *ngIf="brand">
+
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Chi tiết thương hiệu</h3>
+    <button class="btn btn-outline-primary" (click)="edit()">
+      ✏️ Chỉnh sửa
+    </button>
+  </div>
+
+  <!-- CARD -->
+  <div class="card brand-detail-card p-4">
+
+    <div class="row align-items-center">
+
+      <!-- IMAGE -->
+      <div class="col-md-4 text-center mb-3 mb-md-0">
+        <div class="image-wrapper">
+          <img [src]="brand.image" alt="Brand image">
+        </div>
+      </div>
+
+      <!-- INFO -->
+      <div class="col-md-8">
+
+        <div class="info-row">
+          <span class="label">ID</span>
+          <span class="value">#{{ brand.id }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Tên thương hiệu</span>
+          <span class="value highlight">{{ brand.name }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Ngày tạo</span>
+          <span class="value">
+            {{ formatDate(brand.createdAt) }}
+          </span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Cập nhật lần cuối</span>
+          <span class="value">
+            {{ formatDate(brand.updatedAt) }}
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

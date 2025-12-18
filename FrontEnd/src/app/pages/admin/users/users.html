@@ -1,0 +1,101 @@
+<div class="card shadow-sm">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Quản lý người dùng</h5>
+
+    <input type="text" class="form-control w-25" placeholder="Tìm theo tên, email, phone..." [(ngModel)]="search"
+      (ngModelChange)="onSearchChange($event)" />
+
+  </div>
+
+  <div class="card-body">
+
+    <div *ngIf="loading" class="text-center py-3">
+      Đang tải dữ liệu...
+    </div>
+
+    <table class="table table-hover align-middle" *ngIf="!loading">
+      <thead>
+        <tr>
+          <th>Avatar</th>
+          <th>Tên</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th width="120">Hành động</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let u of users">
+          <td>
+            <img [src]="u.avatar || 'assets/default-avatar.png'" width="40" height="40" class="rounded-circle" />
+          </td>
+          <td>{{ u.name || '—' }}</td>
+          <td>{{ u.email || '—' }}</td>
+          <td>{{ u.phone || '—' }}</td>
+          <td>
+            <span class="role-badge" [ngClass]="{
+      'role-user': u.role === 1,
+      'role-admin': u.role === 2
+    }">
+              {{ u.role === 1 ? 'User' : 'Admin' }}
+            </span>
+          </td>
+
+
+          <!-- CLICKABLE STATUS BADGE -->
+          <td>
+            <span class="status-badge" [ngClass]="{
+      'status-active': u.status === 'active',
+      'status-inactive': u.status === 'inactive'
+    }" (click)="toggleStatus(u)" title="Click để đổi trạng thái">
+              {{ u.status | titlecase }}
+            </span>
+          </td>
+
+
+          <td>
+            <a class="btn btn-info btn-sm me-1"  [routerLink]="['detail', u.id]">Chi tiết</a>
+            <button class="btn btn-sm btn-danger" (click)="deleteUser(u)">
+              Xóa
+            </button>
+            
+
+          </td>
+        </tr>
+
+        <tr *ngIf="users.length === 0">
+          <td colspan="7" class="text-center text-muted">
+            Không có người dùng
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- PAGINATION -->
+    <nav *ngIf="totalPages > 1" class="mt-3">
+      <ul class="pagination justify-content-center mb-0">
+        <li class="page-item" [class.disabled]="page === 1">
+          <a class="page-link" (click)="changePage(page - 1)">
+            «
+          </a>
+        </li>
+
+        <li class="page-item" *ngFor="let p of [].constructor(totalPages); let i = index"
+          [class.active]="page === i + 1">
+          <a class="page-link" (click)="changePage(i + 1)">
+            {{ i + 1 }}
+          </a>
+        </li>
+
+        <li class="page-item" [class.disabled]="page === totalPages">
+          <a class="page-link" (click)="changePage(page + 1)">
+            »
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+  </div>
+</div>

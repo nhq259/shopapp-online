@@ -1,0 +1,138 @@
+<div class="container py-4">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <p class="text-muted">Đang tải chi tiết sản phẩm...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="product && !loading" class="row">
+
+    <!-- LEFT: IMAGE -->
+    <div class="col-lg-5 mb-4">
+
+      <!-- Main image -->
+      <div class="border rounded p-3 text-center mb-3">
+        <img
+          [src]="selectedImage || 'assets/img/default-product.jpg'"
+          class="img-fluid"
+          style="max-height: 400px; object-fit: contain;"
+        />
+      </div>
+
+      <!-- Gallery -->
+      <div
+  class="d-flex flex-wrap gap-2 justify-content-center"
+  *ngIf="productImages.length >= 2"
+>
+  <!-- Ảnh đại diện -->
+  <img
+    *ngIf="product.image"
+    [src]="product.image"
+    class="thumb"
+    (click)="selectImage(product.image)"
+    [class.active]="selectedImage === product.image"
+  />
+
+  <!-- Các ảnh gallery -->
+  <img
+    *ngFor="let img of productImages"
+    [src]="img.image_url"
+    class="thumb"
+    (click)="selectImage(img.image_url)"
+    [class.active]="selectedImage === img.image_url"
+  />
+</div>
+
+    </div>
+
+    <!-- RIGHT: INFO -->
+    <div class="col-lg-7">
+
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>{{ product.name }}</h3>
+
+        <button class="btn btn-warning" (click)="editProduct()">
+          <i class="fas fa-edit me-1"></i>
+          Chỉnh sửa
+        </button>
+      </div>
+
+      <!-- Status -->
+      <div class="mb-3">
+        <span class="status-badge" [ngClass]="product.status">
+          {{ product.status }}
+        </span>
+      </div>
+
+      <!-- Basic Info -->
+      <table class="table table-bordered">
+        <tr>
+          <th style="width: 35%">Giá hiện tại</th>
+          <td class="text-danger fw-bold">
+            {{ product.price | number }} ₫
+          </td>
+        </tr>
+
+        <tr *ngIf="product.oldprice">
+          <th>Giá cũ</th>
+          <td><del>{{ product.oldprice | number }} ₫</del></td>
+        </tr>
+
+        <tr>
+          <th>Tồn kho</th>
+          <td>{{ product.quantity }}</td>
+        </tr>
+
+        <tr>
+          <th>Lượt mua</th>
+          <td>{{ product.buyturn || 0 }}</td>
+        </tr>
+
+        <tr>
+          <th>Danh mục</th>
+          <td>{{ product.Category?.name || '-' }}</td>
+        </tr>
+
+        <tr>
+          <th>Thương hiệu</th>
+          <td>{{ product.Brand?.name || '-' }}</td>
+        </tr>
+      </table>
+
+      <!-- Description -->
+      <div class="mb-3">
+        <h6 class="fw-bold">Mô tả</h6>
+        <p class="text-muted">
+          {{ product.description || 'Không có mô tả' }}
+        </p>
+      </div>
+
+      <!-- Specification -->
+      <div class="mb-3">
+        <h6 class="fw-bold">Specification</h6>
+        <p class="text-muted">
+          {{ product.specification || 'Không có thông tin' }}
+        </p>
+      </div>
+
+      <!-- Attributes -->
+      <div *ngIf="product.attributes?.length">
+        <h6 class="fw-bold">Thuộc tính sản phẩm</h6>
+        <table class="table table-sm table-striped table-bordered">
+          <tr *ngFor="let attr of product.attributes">
+            <th style="width: 40%">{{ attr.name }}</th>
+            <td>{{ attr.value }}</td>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>

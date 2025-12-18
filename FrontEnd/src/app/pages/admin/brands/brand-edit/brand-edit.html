@@ -1,0 +1,65 @@
+<div class="container mt-4" *ngIf="!loading">
+
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Chỉnh sửa thương hiệu</h3>
+    <button class="btn btn-outline-secondary" routerLink="/admin/brands">
+      ← Quay lại
+    </button>
+  </div>
+
+  <!-- FORM -->
+  <div class="card p-4 brand-form-card">
+
+    <!-- NAME -->
+    <div class="mb-3">
+      <label class="form-label">
+        Tên thương hiệu <span class="text-danger">*</span>
+      </label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="brand.name"
+        placeholder="Nhập tên thương hiệu"
+      />
+    </div>
+
+    <!-- CURRENT IMAGE -->
+    <div class="mb-3">
+      <label class="form-label">Ảnh hiện tại</label>
+      <div class="image-preview">
+        <img [src]="brand.image" />
+      </div>
+    </div>
+
+    <!-- NEW IMAGE -->
+    <div class="mb-4">
+      <label class="form-label">Đổi ảnh mới</label>
+      <input
+        type="file"
+        class="form-control"
+        accept="image/*"
+        (change)="onFileSelected($event)"
+      />
+
+      <!-- PREVIEW -->
+      <div class="image-preview mt-3" *ngIf="previewImage">
+        <img [src]="previewImage" />
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="d-flex justify-content-end gap-2">
+      <button class="btn btn-secondary" routerLink="/admin/brands">
+        Hủy
+      </button>
+      <button
+        class="btn btn-primary"
+        [disabled]="submitting"
+        (click)="submit()">
+        💾 Lưu thay đổi
+      </button>
+    </div>
+
+  </div>
+</div>

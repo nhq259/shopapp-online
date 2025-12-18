@@ -12,6 +12,8 @@ import { EditProfile } from './pages/profile/edit-profile/edit-profile';
 import { Orders } from './pages/orders/orders';
 import { OrderDetail } from './pages/orders/order-detail/order-detail';
 
+import { AdminGuard } from './guards/admin-guard';
+
 const routes: Routes = [
   {path: '',component: Home},
   {path: 'login',component: Login},
@@ -25,13 +27,25 @@ const routes: Routes = [
   {path: 'orders',component: Orders},
   {path: 'orders/:id',component: OrderDetail},
 
+{
+    path: 'admin',
+    canActivate: [AdminGuard],
+    loadChildren: () =>
+      import('./pages/admin/admin-module').then(m => m.AdminModule)
+  },
 
+  { path: '**', redirectTo: '' }
 
 
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+   imports: [
+    RouterModule.forRoot(routes, {
+      scrollPositionRestoration: 'enabled', // ⭐ QUAN TRỌNG
+      anchorScrolling: 'enabled'
+    })
+  ],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

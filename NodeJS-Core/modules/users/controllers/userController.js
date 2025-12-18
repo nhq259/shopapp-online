@@ -8,6 +8,57 @@ require("dotenv").config();
 const os = require("os");
 const getAvatarURL = require("helpers/imageHelper");
 
+
+// [GET] /api/admin/users
+module.exports.getAllUsers = async (req, res) => {
+  if (req.user.role !== UserRole.ADMIN) {
+    return res.status(403).json({
+      message: "Chỉ quản trị viên mới có quyền truy cập",
+    });
+  }
+
+  const { search = "", page = 1, limit = 5 } = req.query;
+  const offset = (page - 1) * limit;
+
+  const where = {
+    deleted: false,
+    role: UserRole.USER,  
+    ...(search && {
+      [Op.or]: [
+        { email: { [Op.like]: `%${search}%` } },
+        { name: { [Op.like]: `%${search}%` } },
+        { phone: { [Op.like]: `%${search}%` } },
+      ],
+    }),
+  };
+
+  const { rows, count } = await db.User.findAndCountAll({
+    where,
+    attributes: { exclude: ["password"] },
+    limit: Number(limit),
+    offset,
+    order: [["createdAt", "DESC"]],
+  });
+
+  const data = rows.map((u) => {
+    const item = new ResponseUser(u);
+    if (item.avatar) {
+      item.avatar = getAvatarURL.getAvatarURL(item.avatar);
+    }
+    return item;
+  });
+
+  return res.status(200).json({
+    message: "Danh sách người dùng",
+    meta: {
+      page: Number(page),
+      limit: Number(limit),
+      total: count,
+    },
+    data,
+  });
+};
+
 // [GET] /api/users/:id
 module.exports.getUserById = async (req, res) => {
   const { id } = req.params;
@@ -78,6 +129,8 @@ module.exports.registerUser = async (req, res) => {
     phone: hasPhone ? phone : null,
     role: UserRole.USER,
     password: hashPassword,
+    status: "active",
+    deleted: false,
   });
 
   const data = new ResponseUser(user);
@@ -120,6 +173,21 @@ module.exports.login = async (req, res) => {
     message: "Thông tin đăng nhập không chính xác."
   });
 }
+
+ /* 🔒 CHẶN TÀI KHOẢN */
+  if (user.deleted === true) {
+    return res.status(403).json({
+      code: 403,
+      message: "Tài khoản đã bị khóa vĩnh viễn",
+    });
+  }
+
+  if (user.status !== "active") {
+    return res.status(403).json({
+      code: 403,
+      message: "Tài khoản đang bị ngừng hoạt động",
+    });
+  }
 
 
   const match = await argon2.verify(user.password, password);
@@ -217,6 +285,61 @@ module.exports.updateUser = async (req, res) => {
     data: {
       ...updated,
       avatar: getAvatarURL.getAvatarURL(updated.avatar),
+    },
+  });
+};
+
+// [DELETE] /api/admin/users/:id
+module.exports.softDeleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  if (req.user.role !== UserRole.ADMIN) {
+    return res.status(403).json({ message: "Chỉ admin được phép" });
+  }
+
+  if (req.user.id == id) {
+    return res.status(400).json({
+      message: "Không thể xóa chính mình",
+    });
+  }
+
+  const user = await db.User.findByPk(id);
+  if (!user) {
+    return res.status(404).json({ message: "Không tìm thấy user" });
+  }
+
+  await user.update({
+    deleted: true,
+    status: "inactive",
+  });
+
+  return res.status(200).json({
+    message: "Xóa mềm người dùng thành công",
+  });
+};
+
+//[PATCH] /api/users/:id/status
+module.exports.toggleUserStatus = async (req, res) => {
+  const { id } = req.params;
+
+  const user = await db.User.findByPk(id);
+  if (req.user.role !== UserRole.ADMIN) {
+  return res.status(403).json({ message: "Chỉ admin được phép" });
+}
+
+  if (!user) {
+    return res.status(404).json({ message: "Người dùng không tồn tại" });
+  }
+
+  const newStatus = user.status === "active" ? "inactive" : "active";
+
+  await user.update({ status: newStatus });
+
+  return res.json({
+    message: "Cập nhật trạng thái thành công",
+    data: {
+      id: user.id,
+      status: newStatus,
     },
   });
 };

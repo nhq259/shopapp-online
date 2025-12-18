@@ -1,0 +1,91 @@
+<div class="container mt-4">
+
+  <h3>Quản lý ảnh sản phẩm</h3>
+
+  <!-- FILTER + ADD -->
+  <div class="card p-3 mb-4">
+
+    <div class="row g-3 align-items-end">
+
+      <div class="col-md-4">
+        <label>Sản phẩm</label>
+
+<input
+  type="text"
+  class="form-control"
+  placeholder="Nhập tên sản phẩm..."
+  [(ngModel)]="searchTerm"
+  (input)="onSearchProduct()"
+/>
+
+<div class="mt-2">
+  <button
+    class="btn btn-all-products btn-sm"
+    (click)="clearSelectedProduct()">
+    Tất cả sản phẩm
+  </button>
+</div>
+
+
+
+<ul class="list-group mt-1"
+    *ngIf="products.length > 0">
+  <li
+    class="list-group-item list-group-item-action"
+    *ngFor="let p of products"
+    (click)="selectProduct(p)">
+    {{ p.name }}
+  </li>
+</ul>
+
+<div *ngIf="selectedProduct">
+  <strong>Đã chọn:</strong> {{ selectedProduct.name }}
+</div>
+
+      </div>
+
+      <div class="col-md-4">
+        <label>Chọn ảnh</label>
+        <input #fileInput type="file" class="form-control" accept="image/*" (change)="onFileSelected($event)">
+
+      </div>
+
+      <div class="col-md-4">
+        <button class="btn btn-primary w-100" (click)="addImage()">
+          + Thêm ảnh
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- IMAGE LIST -->
+  <div class="row">
+    <div class="col-md-3 mb-4" *ngFor="let img of productImages">
+
+      <div class="card h-100 shadow-sm">
+
+        <img [src]="img.image_url" class="card-img-top" style="height: 180px; object-fit: contain; background:#fff">
+
+        <div class="card-body text-center">
+          <button class="btn btn-danger btn-sm" (click)="deleteImage(img.id)">
+            Xóa
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGINATION -->
+  <nav *ngIf="totalPages > 1">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" *ngFor="let p of [].constructor(totalPages); index as i" [class.active]="page === i + 1">
+        <a class="page-link" style="cursor:pointer" (click)="loadImages(i + 1)">
+          {{ i + 1 }}
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+</div>

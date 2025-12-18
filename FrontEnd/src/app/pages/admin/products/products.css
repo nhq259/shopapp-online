@@ -1,0 +1,73 @@
+/* Badge chung */
+.status-badge {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 999px; /* pill shape */
+  display: inline-block;
+  min-width: 90px;
+  text-align: center;
+  letter-spacing: 0.4px;
+  text-transform: capitalize;
+}
+
+/* ACTIVE */
+.status-badge.active {
+  background-color: #d1fae5;   /* xanh nhạt */
+  color: #065f46;              /* xanh đậm */
+  border: 1px solid #10b981;
+}
+
+/* INACTIVE */
+.status-badge.inactive {
+  background-color: #fee2e2;   /* đỏ nhạt */
+  color: #991b1b;              /* đỏ đậm */
+  border: 1px solid #ef4444;
+}
+
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-badge.active {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.status-badge.inactive {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
+
+/* 👇 QUAN TRỌNG */
+.status-badge.clickable {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.status-badge.clickable:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+.card label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #7a4b48;
+}
+
+.form-select,
+.form-control {
+  border-radius: 12px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #d19b98;
+  box-shadow: 0 0 0 0.15rem rgba(209, 155, 152, 0.25);
+}

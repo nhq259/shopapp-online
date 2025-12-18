@@ -17,6 +17,7 @@ export class Header implements OnInit {
   userAvatar = '';
   orderCount = 0;
   userId = 0;
+  isAdmin = false;
 
   constructor(
     private loginService: LoginService,
@@ -49,6 +50,7 @@ export class Header implements OnInit {
        this.userId = user.id;
       this.userName = user.name;
       this.userAvatar = user.avatar;
+      this.isAdmin = user.role === 2;
       // ⭐ Load số đơn hàng người dùng đã đặt
       this.loadOrderCount(this.userId);
     }

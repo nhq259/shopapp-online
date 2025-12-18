@@ -1,0 +1,44 @@
+<div class="container mt-4" *ngIf="!loading">
+
+  <h3>Chỉnh sửa danh mục</h3>
+
+  <div class="card p-4">
+
+    <div class="mb-3">
+      <label>Tên danh mục *</label>
+      <input class="form-control" [(ngModel)]="category.name">
+    </div>
+
+    <div class="mb-3">
+      <label>Ảnh danh mục</label>
+      <input
+        type="file"
+        class="form-control"
+        accept="image/*"
+        (change)="onFileSelected($event)">
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="mb-3" *ngIf="previewImage">
+      <label>Preview</label><br>
+      <img
+        [src]="previewImage"
+        class="border rounded p-2"
+        style="max-width: 220px; object-fit: contain;">
+    </div>
+
+    <div class="mt-4">
+      <button
+        class="btn btn-primary"
+        (click)="submit()"
+        [disabled]="uploading">
+        {{ uploading ? 'Đang cập nhật...' : 'Cập nhật' }}
+      </button>
+
+      <button class="btn btn-secondary ms-2" (click)="cancel()">
+        Hủy
+      </button>
+    </div>
+
+  </div>
+</div>

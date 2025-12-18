@@ -1,0 +1,50 @@
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-between mb-3">
+    <h3>Quản lý danh mục</h3>
+    <button class="btn btn-primary" (click)="create()">+ Thêm danh mục</button>
+  </div>
+
+  <input type="text" class="form-control mb-3" placeholder="Tìm theo tên danh mục..." [(ngModel)]="search"
+    (input)="onSearch()" />
+
+  <table class="table table-hover text-center">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Ảnh</th>
+        <th>Tên</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let c of categories">
+        <td>{{ c.id }}</td>
+        <td>
+          <img [src]="c.image" width="60" height="60" style="object-fit:contain">
+        </td>
+        <td><b>{{ c.name }}</b></td>
+        <td>
+          <button class="btn btn-info btn-sm me-1" (click)="view(c.id)">
+            Chi tiết
+          </button>
+          <button class="btn btn-warning btn-sm me-1" (click)="edit(c.id)">Sửa</button>
+          <!-- <button class="btn btn-danger btn-sm" (click)="delete(c.id)">Xóa</button> -->
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- PAGINATION -->
+  <nav *ngIf="totalPages > 1">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" *ngFor="let p of [].constructor(totalPages); let i = index" [class.active]="page === i + 1">
+        <a class="page-link" (click)="loadCategories(i + 1)">
+          {{ i + 1 }}
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+</div>

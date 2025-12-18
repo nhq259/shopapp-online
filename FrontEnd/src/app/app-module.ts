@@ -19,6 +19,7 @@ import { Profile } from './pages/profile/profile';
 import { EditProfile } from './pages/profile/edit-profile/edit-profile';
 import { Orders } from './pages/orders/orders';
 import { OrderDetail } from './pages/orders/order-detail/order-detail';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { OrderDetail } from './pages/orders/order-detail/order-detail';
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     FormsModule,
     AppRoutingModule,
     ReactiveFormsModule,

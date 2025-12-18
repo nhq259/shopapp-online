@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../services/product';
 import { CartService } from '../../services/cart';
+import { ProductImageService } from '../../services/product-image';
 
 @Component({
   selector: 'app-product-detail',
@@ -14,10 +15,16 @@ export class ProductDetail implements OnInit {
   product: any = null;
   quantity: number = 1; // mặc định 1 sản phẩm
 
+   /** Gallery */
+  productImages: any[] = [];
+  selectedImage = '';
+
   constructor(
     private route: ActivatedRoute,
     private productService: ProductService,
-      private cartService: CartService
+    private cartService: CartService,
+    private productImageService: ProductImageService
+
   ) {}
 
   ngOnInit(): void {
@@ -29,7 +36,21 @@ export class ProductDetail implements OnInit {
     this.productService.getProductById(id).subscribe((res: any) => {
       this.product = res.data;
       this.quantity = 1; // reset khi load sản phẩm mới
+      // ảnh đại diện
+      this.selectedImage = this.product.image;
+
+      // load gallery
+      this.loadProductImages(id);
     });
+  }
+
+   loadProductImages(productId: number) {
+    this.productImageService.getProductImages(productId).subscribe(res => {
+      this.productImages = res.data || [];
+    });
+  }
+   selectImage(url: string) {
+    this.selectedImage = url;
   }
 
   /** Tăng số lượng */

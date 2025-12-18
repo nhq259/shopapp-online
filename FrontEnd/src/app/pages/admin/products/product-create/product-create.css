@@ -1,0 +1,162 @@
+/* Container */
+.container {
+  max-width: 900px;
+}
+
+/* Card */
+.card {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Title */
+h3 {
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* Label */
+label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: inline-block;
+}
+
+/* Inputs & selects */
+.form-control,
+.form-select {
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ced4da;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.2);
+}
+
+/* Textarea */
+textarea.form-control {
+  resize: vertical;
+}
+
+/* Attributes section */
+h5 {
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* Attribute row */
+.row.mb-2 {
+  align-items: center;
+}
+
+/* Buttons */
+.btn {
+  border-radius: 8px;
+  font-size: 14px;
+  padding: 8px 16px;
+}
+
+/* Add attribute button */
+.btn-outline-secondary {
+  border-style: dashed;
+}
+
+/* Remove attribute button */
+.btn-danger {
+  padding: 6px 12px;
+}
+
+/* Action buttons */
+.btn-primary {
+  font-weight: 600;
+}
+
+.btn-secondary {
+  background-color: #f1f3f5;
+  color: #333;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #e9ecef;
+}
+
+/* Spacing fixes */
+.mt-3 {
+  margin-top: 16px !important;
+}
+
+.mb-3 {
+  margin-bottom: 16px !important;
+}
+
+/* Mobile friendly */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 12px;
+  }
+
+  .row > .col {
+    margin-bottom: 12px;
+  }
+}
+/* Upload image wrapper */
+.image-upload {
+  margin-top: 16px;
+}
+
+/* Label */
+.image-upload label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* File input */
+.image-upload input[type="file"] {
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Preview container */
+.image-preview {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px dashed #ced4da;
+  background-color: #f8f9fa;
+  display: inline-block;
+}
+
+/* Preview image */
+.image-preview img {
+  max-width: 200px;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Hover effect */
+.image-preview img:hover {
+  transform: scale(1.03);
+  transition: transform 0.2s ease;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .image-preview img {
+    max-width: 100%;
+    height: auto;
+  }
+}
