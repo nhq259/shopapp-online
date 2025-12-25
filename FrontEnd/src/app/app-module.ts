@@ -1,6 +1,9 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
+
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Header } from './components/header/header';
@@ -44,7 +47,15 @@ import { CommonModule } from '@angular/common';
     FormsModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    BrowserAnimationsModule,
+  ToastrModule.forRoot({
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    closeButton: true,
+    progressBar: true,
+  }),
+    
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

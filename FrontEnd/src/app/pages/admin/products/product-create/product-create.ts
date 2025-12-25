@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CategoryService } from '../../../../services/category';
 import { BrandService } from '../../../../services/brand'; 
 import { ImageService } from '../../../../services/image';
+import { NotificationService } from '../../../../services/notifycation';
 
 
 @Component({
@@ -37,8 +38,7 @@ export class ProductCreate {
     private categoryService: CategoryService,
     private brandService: BrandService,
     private imageService: ImageService,
-
-
+private notify: NotificationService,
     private router: Router
   ) {}
 
@@ -89,12 +89,12 @@ onFileSelected(event: any) {
   /** 💾 Submit form */
   submit() {
   if (!this.product.name.trim()) {
-    alert("Tên sản phẩm là bắt buộc");
+    this.notify.warning('Tên sản phẩm là bắt buộc');
     return;
   }
 
   if (!this.selectedFile) {
-    alert("Vui lòng chọn ảnh");
+    this.notify.warning('Vui lòng chọn ảnh sản phẩm');
     return;
   }
 
@@ -112,16 +112,16 @@ onFileSelected(event: any) {
       // 3️⃣ Tạo product
       this.productService.createProduct(payload).subscribe({
         next: () => {
-          alert("Thêm sản phẩm thành công");
+          this.notify.success('Thêm sản phẩm thành công');
           this.router.navigate(["/admin/products"]);
         },
         error: err => {
-          alert(err.error?.message || "Lỗi tạo sản phẩm");
+          this.notify.error(err.error?.message || 'Lỗi tạo sản phẩm');
         }
       });
     },
     error: () => {
-      alert("Upload ảnh thất bại");
+      this.notify.error('Upload ảnh thất bại');
     }
   });
 }

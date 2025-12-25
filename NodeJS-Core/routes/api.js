@@ -224,6 +224,16 @@ router.delete(
   requireRoles([UserRole.ADMIN]),
   asyncHandler(orderController.deleteOrder)
 );
+router.patch(
+  "/orders/:id/status",
+  requireRoles([UserRole.ADMIN]),
+  asyncHandler(orderController.updateOrderStatus )
+);
+router.patch(
+  "/orders/:id/cancel",
+  requireRoles([UserRole.ADMIN,UserRole.USER]),
+  asyncHandler(orderController.cancelOrderByUser )
+);
 
 // Order Detail Routes
 router.get(

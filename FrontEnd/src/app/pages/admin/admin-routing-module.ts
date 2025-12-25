@@ -18,6 +18,7 @@ import { BrandEdit } from './brands/brand-edit/brand-edit';
 import { BrandCreate } from './brands/brand-create/brand-create';
 import { Users } from './users/users';
 import { UserDetail } from './users/user-detail/user-detail';
+import { OrderDetail } from './orders/order-detail/order-detail';
 
 const routes: Routes = [
   {
@@ -36,7 +37,10 @@ const routes: Routes = [
           { path: 'edit/:id', component: ProductEdit },
         ],
       },
-      { path: 'orders', component: Orders },
+      { path: 'orders',
+        children: [
+          { path: '', component: Orders }, // /admin/products
+          { path: 'detail/:id', component: OrderDetail },] },
       {
         path: 'categories',
         children: [

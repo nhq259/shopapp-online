@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../services/notifycation';
 
 @Component({
   selector: 'app-profile',
@@ -14,14 +15,16 @@ export class Profile implements OnInit {
 
   constructor(
     private userService: UserService,
-    private router: Router
+    private router: Router,
+        private notify: NotificationService
+    
   ) {}
 
   ngOnInit() {
     const stored = localStorage.getItem("user");
 
     if (!stored) {
-      alert("Bạn cần đăng nhập!");
+      this.notify.info("Bạn cần đăng nhập!");
       this.router.navigate(['/login']);
       return;
     }
@@ -39,7 +42,7 @@ export class Profile implements OnInit {
       },
       error: (err) => {
         console.error("Load user error:", err);
-        alert("Không thể tải thông tin người dùng!");
+        this.notify.error("Không thể tải thông tin người dùng!");
       }
     });
   }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CategoryService } from '../../../services/category';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../../services/notifycation';
 
 @Component({
   selector: 'app-categories',
@@ -17,7 +18,8 @@ export class Categories implements OnInit {
 
   constructor(
     private categoryService: CategoryService,
-    private router: Router
+    private router: Router,
+    private notify: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -51,7 +53,7 @@ export class Categories implements OnInit {
     if (!confirm('Xóa danh mục này?')) return;
 
     this.categoryService.deleteCategory(id).subscribe(() => {
-      alert('Đã xóa danh mục');
+      this.notify.success('Đã xóa danh mục');
       this.loadCategories(this.page);
     });
   }

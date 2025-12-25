@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BrandService } from '../../../../services/brand';
 import { ImageService } from '../../../../services/image';
+import { NotificationService } from '../../../../services/notifycation';
 
 @Component({
   selector: 'app-brand-edit',
@@ -29,7 +30,8 @@ export class BrandEdit implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private brandService: BrandService,
-    private imageService: ImageService
+    private imageService: ImageService,
+    private notify: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -48,7 +50,7 @@ export class BrandEdit implements OnInit {
         this.loading = false;
       },
       error: () => {
-        alert('Không tìm thấy thương hiệu');
+        this.notify.error('Không tìm thấy thương hiệu');
         this.router.navigate(['/admin/brands']);
       }
     });
@@ -72,7 +74,7 @@ export class BrandEdit implements OnInit {
   /** Validate dữ liệu */
   validate(): boolean {
     if (!this.brand.name || !this.brand.name.trim()) {
-      alert('Tên thương hiệu không được để trống');
+      this.notify.warning('Tên thương hiệu không được để trống');
       return false;
     }
     return true;
@@ -93,7 +95,7 @@ export class BrandEdit implements OnInit {
         },
         error: () => {
           this.submitting = false;
-          alert('Upload ảnh thất bại');
+          this.notify.error('Upload ảnh thất bại');
         }
       });
     } else {
@@ -105,12 +107,12 @@ export class BrandEdit implements OnInit {
   private updateBrand() {
     this.brandService.updateBrand(this.brandId, this.brand).subscribe({
       next: () => {
-        alert('Cập nhật thương hiệu thành công');
+        this.notify.success('Cập nhật thương hiệu thành công');
         this.router.navigate(['/admin/brands']);
       },
       error: (err) => {
         this.submitting = false;
-        alert(err.error?.message || 'Không thể cập nhật thương hiệu');
+        this.notify.error(err.error?.message || 'Không thể cập nhật thương hiệu');
       }
     });
   }

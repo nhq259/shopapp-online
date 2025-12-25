@@ -1,0 +1,142 @@
+<div class="container" *ngIf="!loading && order">
+  <div class="card shadow-sm">
+
+    <!-- HEADER -->
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Chi tiết đơn hàng #{{ order.id }}</h5>
+      <button class="btn btn-secondary btn-sm" (click)="back()">← Quay lại</button>
+    </div>
+
+    <div class="card-body">
+
+      <!-- ================= ORDER INFO ================= -->
+      <h6 class="mb-3">Thông tin đơn hàng</h6>
+
+      <table class="table table-borderless align-middle">
+        <tr>
+          <th width="200">User ID</th>
+          <td>{{ order.user_id }}</td>
+        </tr>
+        <tr>
+          <th>Phone</th>
+          <td>{{ order.phone }}</td>
+        </tr>
+        <tr>
+          <th>Address</th>
+          <td>{{ order.address }}</td>
+        </tr>
+        <tr>
+          <th>Note</th>
+          <td>{{ order.note || '—' }}</td>
+        </tr>
+        <tr>
+          <th>Trạng thái</th>
+          <td>
+            <span
+              class="order-status"
+              [ngClass]="getStatusClass(order.status)"
+            >
+              {{ getStatusLabel(order.status) }}
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <th>Tổng tiền</th>
+          <td class="total-price">
+            {{ order.total | number:'1.0-0' }} ₫
+          </td>
+        </tr>
+      </table>
+
+      <hr />
+
+      <!-- ================= ADMIN ACTION ================= -->
+      <h6 class="mb-3">Hành động quản trị</h6>
+
+      <div class="d-flex align-items-center gap-3 mb-4">
+
+        <!-- UPDATE STATUS -->
+        <div>
+          <label class="form-label mb-1 fw-semibold">Cập nhật trạng thái</label>
+          <select
+  class="form-select"
+  [(ngModel)]="order.status"
+  (change)="onStatusSelectChange($event)"
+>
+
+            <option [value]="1">Pending</option>
+            <option [value]="2">Processing</option>
+            <option [value]="3">Shipped</option>
+            <option [value]="4">Delivered</option>
+            <option [value]="6">Refund</option>
+            <option [value]="7">Failed</option>
+          </select>
+
+          <small class="text-muted" *ngIf="order.status === 4">
+            Đơn hàng đã giao, không thể cập nhật
+          </small>
+        </div>
+
+        <!-- CANCEL ORDER -->
+        <div>
+          <label class="form-label mb-1 fw-semibold">Hủy đơn hàng</label>
+          <div>
+            <button
+              class="btn btn-danger"
+              *ngIf="[1,2].includes(order.status)"
+              (click)="cancelOrder()"
+            >
+              Hủy đơn
+            </button>
+
+            <span
+              *ngIf="![1,2].includes(order.status)"
+              class="text-muted"
+            >
+              Không thể hủy ở trạng thái này
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+      <hr />
+
+      <!-- ================= ORDER DETAILS ================= -->
+      <h6 class="mb-3">Sản phẩm trong đơn</h6>
+
+      <table class="table table-bordered align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Sản phẩm</th>
+            <th class="text-end">Giá</th>
+            <th class="text-center">Số lượng</th>
+            <th class="text-end">Thành tiền</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let d of order.order_details">
+            <td>{{ d.product?.name }}</td>
+            <td class="text-end">{{ d.price | number:'1.0-0' }} ₫</td>
+            <td class="text-center">{{ d.quantity }}</td>
+            <td class="text-end fw-bold">
+              {{ d.price * d.quantity | number:'1.0-0' }} ₫
+            </td>
+          </tr>
+
+          <tr *ngIf="order.order_details?.length === 0">
+            <td colspan="4" class="text-center text-muted">
+              Không có sản phẩm
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="text-center py-5">
+  Đang tải dữ liệu...
+</div>

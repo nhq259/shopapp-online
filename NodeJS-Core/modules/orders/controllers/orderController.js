@@ -120,7 +120,7 @@ module.exports.insertOrder = async (req, res) => {
     return res.status(404).json({ message: "Không thể thêm mới đơn hàng" });
   }
 };
-*/
+
 
 // [PUT] /api/orders/:id
 module.exports.updateOrder = async (req, res) => {
@@ -158,6 +158,67 @@ module.exports.deleteOrder = async (req, res) => {
 
   return res.status(200).json({
     message: "Xóa (soft delete) đơn hàng thành công",
+    data: order,
+  });
+};
+*/
+// [PATCH] /api/orders/:id/status
+module.exports.updateOrderStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  // chỉ admin
+  if (req.user.role !== 2) {
+    return res.status(403).json({ message: "Chỉ admin được cập nhật trạng thái đơn hàng" });
+  }
+
+  const order = await db.Order.findByPk(id);
+  if (!order) {
+    return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+  }
+
+  // không cho update nếu đã delivered
+  if (order.status === 4) {
+    return res.status(400).json({ message: "Đơn hàng đã giao thành công, không thể cập nhật" });
+  }
+
+  order.status = status;
+  await order.save();
+
+  return res.json({
+    message: "Cập nhật trạng thái đơn hàng thành công",
+    data: order,
+  });
+};
+// [PATCH] /api/orders/:id/cancel
+module.exports.cancelOrderByUser = async (req, res) => {
+  const { id } = req.params;
+
+  const order = await db.Order.findByPk(id);
+  if (!order) {
+    return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+  }
+
+  // chỉ chủ đơn hoặc admin
+if (order.user_id !== req.user.id && req.user.role !== 2) {
+  return res.status(403).json({
+    message: "Không có quyền hủy đơn hàng này",
+  });
+}
+
+
+  // chỉ cho phép hủy nếu pending / processing
+  if (![1, 2].includes(order.status)) {
+    return res.status(400).json({
+      message: "Đơn hàng đã được xử lý, không thể hủy",
+    });
+  }
+
+  order.status = 5; // CANCELED
+  await order.save();
+
+  return res.json({
+    message: "Hủy đơn hàng thành công",
     data: order,
   });
 };

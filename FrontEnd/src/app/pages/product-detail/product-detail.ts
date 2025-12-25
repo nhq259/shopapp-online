@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../services/product';
 import { CartService } from '../../services/cart';
 import { ProductImageService } from '../../services/product-image';
+import { NotificationService } from '../../services/notifycation';
 
 @Component({
   selector: 'app-product-detail',
@@ -23,7 +24,9 @@ export class ProductDetail implements OnInit {
     private route: ActivatedRoute,
     private productService: ProductService,
     private cartService: CartService,
-    private productImageService: ProductImageService
+    private productImageService: ProductImageService,
+            private notify: NotificationService
+    
 
   ) {}
 
@@ -80,12 +83,12 @@ export class ProductDetail implements OnInit {
     const cart_id = Number(localStorage.getItem("cart_id"));
 
     if (!cart_id) {
-      alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!");
+      this.notify.info("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!");
       return;
     }
 
     if (this.quantity > this.product.quantity) {
-      alert(`Không đủ tồn kho! Chỉ còn ${this.product.quantity} sản phẩm`);
+      this.notify.info(`Không đủ tồn kho! Chỉ còn ${this.product.quantity} sản phẩm`);
       return;
     }
 
@@ -104,10 +107,10 @@ export class ProductDetail implements OnInit {
         this.cartService.updateCartCount(totalQty);
       });
         
-        alert("Đã thêm sản phẩm vào giỏ hàng!");
+        this.notify.success("Đã thêm sản phẩm vào giỏ hàng!");
       },
       error: (err) => {
-        alert(err.error?.message || "Không thể thêm sản phẩm vào giỏ");
+        this.notify.error(err.error?.message || "Không thể thêm sản phẩm vào giỏ");
       }
     });
   }

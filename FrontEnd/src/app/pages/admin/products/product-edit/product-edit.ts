@@ -4,6 +4,7 @@ import { ProductService } from '../../../../services/product';
 import { CategoryService } from '../../../../services/category';
 import { BrandService } from '../../../../services/brand';
 import { ImageService } from '../../../../services/image';
+import { NotificationService } from '../../../../services/notifycation';
 
 @Component({
   selector: 'app-product-edit',
@@ -45,7 +46,8 @@ previewImage: string | null = null;
     private productService: ProductService,
     private categoryService: CategoryService,
     private brandService: BrandService,
-     private imageService: ImageService
+     private imageService: ImageService,
+     private notify: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -80,7 +82,7 @@ previewImage: string | null = null;
         this.loading = false;
       },
       error: () => {
-        alert('Không thể tải sản phẩm');
+        this.notify.error('Không thể tải sản phẩm');
         this.router.navigate(['/admin/products']);
       }
     });
@@ -127,7 +129,7 @@ previewImage: string | null = null;
   /** Submit update */
    submit() {
     if (!this.product.name.trim()) {
-      alert('Tên sản phẩm là bắt buộc');
+       this.notify.warning('Tên sản phẩm là bắt buộc');
       return;
     }
 
@@ -142,11 +144,11 @@ previewImage: string | null = null;
 
       this.productService.updateProduct(this.productId, payload).subscribe({
         next: () => {
-          alert('Cập nhật sản phẩm thành công');
+          this.notify.success('Cập nhật sản phẩm thành công');
           this.router.navigate(['/admin/products']);
         },
         error: (err) => {
-          alert(err.error?.message || 'Cập nhật thất bại');
+          this.notify.error(err.error?.message || 'Cập nhật thất bại');
           this.submitting = false;
         }
       });
@@ -160,7 +162,7 @@ previewImage: string | null = null;
           updateProduct(fileName);
         },
         error: () => {
-          alert('Upload ảnh thất bại');
+          this.notify.error('Upload ảnh thất bại');
           this.submitting = false;
         }
       });

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CategoryService } from '../../../../services/category';
 import { Router } from '@angular/router';
 import { ImageService } from '../../../../services/image';
+import { NotificationService } from '../../../../services/notifycation';
 
 @Component({
   selector: 'app-category-create',
@@ -23,7 +24,9 @@ export class CategoryCreate {
   constructor(
     private categoryService: CategoryService,
     private imageService: ImageService,
-    private router: Router
+    private router: Router,
+        private notify: NotificationService
+    
   ) {}
 
   onFileSelected(event: any) {
@@ -40,7 +43,7 @@ export class CategoryCreate {
 
   submit() {
     if (!this.category.name.trim()) {
-      alert('Tên danh mục là bắt buộc');
+      this.notify.warning('Tên danh mục là bắt buộc');
       return;
     }
 
@@ -54,7 +57,7 @@ export class CategoryCreate {
           this.createCategory();
         },
         error: () => {
-          alert('Upload ảnh thất bại');
+          this.notify.error('Upload ảnh thất bại');
           this.uploading = false;
         }
       });
@@ -66,11 +69,11 @@ export class CategoryCreate {
   private createCategory() {
     this.categoryService.createCategory(this.category).subscribe({
       next: () => {
-        alert('Thêm danh mục thành công');
+        this.notify.success('Thêm danh mục thành công');
         this.router.navigate(['/admin/categories']);
       },
       error: (err) => {
-        alert(err.error?.message || 'Thêm danh mục thất bại');
+        this.notify.error(err.error?.message || 'Thêm danh mục thất bại');
         this.uploading = false;
       }
     });

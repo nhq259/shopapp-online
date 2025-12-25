@@ -4,6 +4,8 @@ import { ProductService } from '../../../services/product';
 import { BrandService } from '../../../services/brand';
 import { CategoryService } from '../../../services/category';
 
+import { NotificationService } from '../../../services/notifycation';
+
 @Component({
   selector: 'app-products',
   standalone: false,
@@ -33,7 +35,8 @@ brands: any[] = [];
     private productService: ProductService,
     private router: Router,
     private categoryService: CategoryService,
-    private brandService: BrandService
+    private brandService: BrandService,
+         private notify: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -52,7 +55,7 @@ brands: any[] = [];
       },
       error: (err) => {
         console.error("LOAD PRODUCTS ERROR:", err);
-        alert("Không thể tải danh sách sản phẩm");
+         this.notify.error("Không thể tải danh sách sản phẩm");
       }
     });
   }
@@ -107,44 +110,60 @@ resetFilter() {
       ? 'Bạn muốn NGỪNG BÁN sản phẩm này?'
       : 'Bạn muốn KÍCH HOẠT lại sản phẩm này?';
 
-  if (!confirm(confirmMsg)) return;
+  if (!confirm(confirmMsg)) {
+    this.notify.info('Đã hủy thao tác');
+    return;
+  }
 
-  this.productService.toggleProductStatus(product.id).subscribe({
+   this.productService.toggleProductStatus(product.id).subscribe({
     next: (res) => {
-      // update UI ngay, không cần reload
       product.status = res.data.status;
+
+      const msg =
+        product.status === 'active'
+          ? 'Sản phẩm đã được kích hoạt'
+          : 'Sản phẩm đã được ngừng bán';
+
+      this.notify.success(msg, 'Thành công');
     },
     error: () => {
-      alert('Không thể cập nhật trạng thái sản phẩm');
+      this.notify.error('Không thể cập nhật trạng thái sản phẩm', 'Lỗi');
     }
   });
 }
 
 //xóa mềm sp
-/** ⭐ XÓA MỀM SẢN PHẨM */
 deleteProduct(id: number) {
   const ok = confirm(
     'Bạn có chắc chắn muốn XÓA sản phẩm này?\n' +
     'Sản phẩm sẽ bị ẩn khỏi hệ thống.'
   );
 
-  if (!ok) return;
+  if (!ok) {
+    this.notify.info('Đã hủy xóa sản phẩm');
+    return;
+  }
 
   this.productService.deleteProduct(id).subscribe({
     next: (res) => {
-      alert(res.message || 'Xóa sản phẩm thành công');
+      this.notify.success(
+        res.message || 'Xóa sản phẩm thành công',
+        'Thành công'
+      );
 
       // reload lại danh sách trang hiện tại
       this.loadProducts(this.currentPage);
     },
     error: (err) => {
-      alert(
+      this.notify.error(
         err.error?.message ||
-        'Không thể xóa sản phẩm. Vui lòng thử lại.'
+        'Không thể xóa sản phẩm. Vui lòng thử lại.',
+        'Lỗi'
       );
     }
   });
 }
+
 
 
 }

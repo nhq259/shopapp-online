@@ -15,7 +15,23 @@
       <p><strong>Note:</strong> {{ order.note }}</p>
       <p><strong>Address:</strong> {{ order.address }}</p>
       <p><strong>Phone:</strong> {{ order.phone }}</p>
+      <!-- ACTION: CANCEL ORDER -->
+    <div class="mt-3">
+      <button
+        class="btn btn-danger"
+        *ngIf="canCancel()"
+        (click)="cancelOrder()"
+      >
+        Hủy đơn hàng
+      </button>
 
+      <small
+        *ngIf="!canCancel()"
+        class="text-muted d-block"
+      >
+        Đơn hàng không thể hủy ở trạng thái này
+      </small>
+    </div>
     </div>
   </div>
 

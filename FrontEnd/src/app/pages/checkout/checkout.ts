@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CartService } from '../../services/cart';
+import { NotificationService } from '../../services/notifycation';
 
 @Component({
   selector: 'app-checkout',
@@ -18,7 +19,9 @@ export class Checkout implements OnInit {
   address = '';
   note = '';
 
-  constructor(private cartService: CartService) {}
+  constructor(private cartService: CartService,
+        private notify: NotificationService
+  ) {}
 
   ngOnInit() {
     this.cartService.getCartById(this.cart_id).subscribe((res) => {
@@ -36,7 +39,7 @@ export class Checkout implements OnInit {
 
   placeOrder() {
     if (!this.phone || !this.address) {
-      alert('Vui lòng nhập đầy đủ thông tin!');
+      this.notify.info('Vui lòng nhập đầy đủ thông tin!');
       return;
     }
 
@@ -60,7 +63,7 @@ export class Checkout implements OnInit {
         // window.location.href = '/';
       },
       error: (err) => {
-        alert(err.error?.message || 'Checkout thất bại');
+        this.notify.error(err.error?.message || 'Checkout thất bại');
       },
     });
   }
@@ -75,7 +78,7 @@ export class Checkout implements OnInit {
       window.location.href = "/";
     },
     error: () => {
-      alert("Không thể tạo giỏ hàng mới!");
+      this.notify.error("Không thể tạo giỏ hàng mới!");
     }
   });
 }

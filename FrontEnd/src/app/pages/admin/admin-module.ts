@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
+import { ToastrModule } from 'ngx-toastr';
+
 import { AdminRoutingModule } from './admin-routing-module';
 import { AdminLayout } from './admin-layout/admin-layout';
 import { Dashboard } from './dashboard/dashboard';
@@ -22,6 +24,7 @@ import { BrandCreate } from './brands/brand-create/brand-create';
 import { BrandEdit } from './brands/brand-edit/brand-edit';
 import { Users } from './users/users';
 import { UserDetail } from './users/user-detail/user-detail';
+import { OrderDetail } from './orders/order-detail/order-detail';
 
 
 @NgModule({
@@ -44,12 +47,14 @@ import { UserDetail } from './users/user-detail/user-detail';
     BrandEdit,
     Users,
     UserDetail,
+    OrderDetail,
   ],
   imports: [
     CommonModule,
     FormsModule,
     RouterModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    ToastrModule,
   ]
 })
 export class AdminModule { }

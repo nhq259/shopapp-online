@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { OrderService } from '../../../services/order';
+import { NotificationService } from '../../../services/notifycation';
 
 @Component({
   selector: 'app-order-detail',
@@ -15,7 +16,9 @@ export class OrderDetail implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private notify: NotificationService
+    
   ) {}
 
   ngOnInit() {
@@ -29,7 +32,7 @@ export class OrderDetail implements OnInit {
         this.order = res.data;
       },
       error: () => {
-        alert("Không thể tải chi tiết đơn hàng");
+        this.notify.error("Không thể tải chi tiết đơn hàng");
       }
     });
   }
@@ -62,5 +65,25 @@ getStatusClass(status: number): string {
     default: return "badge badge-light";
   }
 }
+
+canCancel(): boolean {
+  return this.order && (this.order.status === 1 || this.order.status === 2);
+}
+
+cancelOrder() {
+  if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) return;
+
+  this.orderService.cancelOrder(this.order.id).subscribe({
+    next: (res) => {
+      // backend trả về order đã update status = CANCELED (5)
+      this.order.status = res.data.status;
+      this.notify.success('Đơn hàng đã được hủy thành công');
+    },
+    error: (err) => {
+      this.notify.error(err.error?.message || 'Không thể hủy đơn hàng');
+    }
+  });
+}
+
 
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from '../../../../services/category';
 import { ImageService } from '../../../../services/image';
+import { NotificationService } from '../../../../services/notifycation';
 
 @Component({
   selector: 'app-category-edit',
@@ -26,7 +27,8 @@ export class CategoryEdit implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private categoryService: CategoryService,
-    private imageService: ImageService
+    private imageService: ImageService,
+    private notify: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -45,7 +47,7 @@ export class CategoryEdit implements OnInit {
         this.loading = false;
       },
       error: () => {
-        alert('Không tìm thấy danh mục');
+        this.notify.error('Không tìm thấy danh mục');
         this.router.navigate(['/admin/categories']);
       }
     });
@@ -64,7 +66,7 @@ export class CategoryEdit implements OnInit {
 
   submit() {
     if (!this.category.name.trim()) {
-      alert('Tên danh mục là bắt buộc');
+      this.notify.warning('Tên danh mục là bắt buộc');
       return;
     }
 
@@ -77,7 +79,7 @@ export class CategoryEdit implements OnInit {
           this.updateCategory();
         },
         error: () => {
-          alert('Upload ảnh thất bại');
+          this.notify.error('Upload ảnh thất bại');
           this.uploading = false;
         }
       });
@@ -89,11 +91,11 @@ export class CategoryEdit implements OnInit {
   private updateCategory() {
     this.categoryService.updateCategory(this.categoryId, this.category).subscribe({
       next: () => {
-        alert('Cập nhật danh mục thành công');
+        this.notify.success('Cập nhật danh mục thành công');
         this.router.navigate(['/admin/categories']);
       },
       error: (err) => {
-        alert(err.error?.message || 'Cập nhật thất bại');
+        this.notify.error(err.error?.message || 'Cập nhật thất bại');
         this.uploading = false;
       }
     });

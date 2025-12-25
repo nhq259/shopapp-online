@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../../services/user';
+import { NotificationService } from '../../../services/notifycation';
 
 @Component({
   selector: 'app-edit-profile',
@@ -21,7 +22,9 @@ export class EditProfile implements OnInit {
 
   constructor(
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private notify: NotificationService
+    
   ) {}
 
   ngOnInit() {
@@ -39,7 +42,7 @@ export class EditProfile implements OnInit {
         this.avatar = this.user.avatar;
       },
       error: (err) => {
-        alert("Không thể tải thông tin người dùng");
+        this.notify.error("Không thể tải thông tin người dùng");
       }
     });
   }
@@ -56,7 +59,7 @@ export class EditProfile implements OnInit {
     // Nếu đổi mật khẩu → BE yêu cầu old_password + new_password
     if (this.new_password) {
       if (!this.old_password) {
-        alert("Bạn phải nhập mật khẩu cũ để đổi mật khẩu!");
+        this.notify.info("Bạn phải nhập mật khẩu cũ để đổi mật khẩu!");
         return;
       }
 
@@ -77,7 +80,7 @@ export class EditProfile implements OnInit {
       location.assign('/login')
       return;
     }
-        alert("Cập nhật thành công!");
+        this.notify.success("Cập nhật thành công!");
 
         // cập nhật lại localStorage
         localStorage.setItem("user", JSON.stringify(res.data));
@@ -88,9 +91,9 @@ export class EditProfile implements OnInit {
         console.error(err);
 
         if (err.error?.fields) {
-          alert("Lỗi: Các trường không được phép cập nhật: " + err.error.fields.join(", "));
+          this.notify.error("Lỗi: Các trường không được phép cập nhật: " + err.error.fields.join(", "));
         } else {
-          alert(err.error?.message || "Cập nhật thất bại!");
+          this.notify.error(err.error?.message || "Cập nhật thất bại!");
         }
       }
     });

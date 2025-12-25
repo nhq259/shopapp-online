@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { BrandService } from '../../../../services/brand';
 import { ImageService } from '../../../../services/image';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../../../services/notifycation';
 
 @Component({
   selector: 'app-brand-create',
@@ -22,7 +23,8 @@ export class BrandCreate {
   constructor(
     private brandService: BrandService,
     private imageService: ImageService,
-    private router: Router
+    private router: Router,
+    private notify: NotificationService
   ) {}
 
   /** chọn file ảnh */
@@ -43,7 +45,7 @@ export class BrandCreate {
   /** submit form */
   submit() {
     if (!this.brand.name.trim()) {
-      alert('Tên thương hiệu là bắt buộc');
+      this.notify.warning('Tên thương hiệu là bắt buộc');
       return;
     }
 
@@ -54,7 +56,7 @@ export class BrandCreate {
           this.brand.image = res.files[0];
           this.createBrand();
         },
-        error: () => alert('Upload ảnh thất bại')
+        error: () => this.notify.error('Upload ảnh thất bại')
       });
     } else {
       this.createBrand();
@@ -64,11 +66,11 @@ export class BrandCreate {
   private createBrand() {
     this.brandService.createBrand(this.brand).subscribe({
       next: () => {
-        alert('Thêm thương hiệu thành công');
+        this.notify.success('Thêm thương hiệu thành công');
         this.router.navigate(['/admin/brands']);
       },
       error: (err) => {
-        alert(err.error?.message || 'Không thể thêm thương hiệu');
+        this.notify.error(err.error?.message || 'Không thể thêm thương hiệu');
       }
     });
   }

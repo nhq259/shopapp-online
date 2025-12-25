@@ -3,6 +3,7 @@ import { ProductService } from '../../services/product';
 import { CategoryService } from '../../services/category';
 import { BrandService } from '../../services/brand';
 import { CartService } from '../../services/cart';
+import { NotificationService } from '../../services/notifycation';
 
 @Component({
   selector: 'app-shop',
@@ -31,7 +32,8 @@ export class Shop implements OnInit {
     private productService: ProductService,
     private categoryService: CategoryService,
     private brandService: BrandService,
-    private cartService: CartService
+    private cartService: CartService,
+    private notify: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -118,7 +120,7 @@ export class Shop implements OnInit {
     const cart_id = Number(localStorage.getItem('cart_id'));
 
     if (!cart_id) {
-      alert('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!');
+      this.notify.info('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!');
       return;
     }
 
@@ -138,10 +140,10 @@ export class Shop implements OnInit {
           );
           this.cartService.updateCartCount(totalQty);
         });
-        alert('Đã thêm sản phẩm vào giỏ hàng!');
+        this.notify.success('Đã thêm sản phẩm vào giỏ hàng!');
       },
       error: (err) => {
-        alert(err.error.message || 'Không thể thêm sản phẩm');
+        this.notify.error(err.error.message || 'Không thể thêm sản phẩm');
       },
     });
   }
